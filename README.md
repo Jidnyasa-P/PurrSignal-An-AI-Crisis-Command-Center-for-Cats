@@ -1,6 +1,8 @@
 # 🐾 PurrSignal
 
-PurrSignal is a highly sophisticated, full-stack, AI-assisted crisis coordination platform designed specifically for cat rescue, tracing, and reunification. It bridges the gap between fragmented public community sighting data and active on-the-ground professional volunteer response. By transforming unorganized, chaotic incident reports into structured, prioritizable operational dispatches, PurrSignal ensures that trapped, lost, or injured cats are rescued swiftly and safely.
+<img width="1671" height="941" alt="ChatGPT Image Jul 7, 2026, 01_13_04 PM" src="https://github.com/user-attachments/assets/7a90e2e4-8ef3-4b2c-8db3-2dcb58a6472a" />
+
+### PurrSignal is a highly sophisticated, full-stack, AI-assisted crisis coordination platform designed specifically for cat rescue, tracing, and reunification. It bridges the gap between fragmented public community sighting data and active on-the-ground professional volunteer response. By transforming unorganized, chaotic incident reports into structured, prioritizable operational dispatches, PurrSignal ensures that trapped, lost, or injured cats are rescued swiftly and safely.
 
 ---
 
