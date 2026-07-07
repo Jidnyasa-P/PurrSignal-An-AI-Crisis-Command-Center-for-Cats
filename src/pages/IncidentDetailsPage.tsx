@@ -30,6 +30,18 @@ interface IncidentDetailsPageProps {
   onLaunchMissionForIncident?: (incident: Incident) => void;
 }
 
+const normalizeStatus = (status: string | IncidentStatus): IncidentStatus => {
+  if (status === 'reported') return IncidentStatus.NEW;
+  if (status === 'structured') return IncidentStatus.AI_ANALYZED;
+  if (status === 'prioritized') return IncidentStatus.NEEDS_VERIFICATION;
+  if (status === 'verified') return IncidentStatus.VERIFIED;
+  if (status === 'mission_created') return IncidentStatus.MISSION_CREATED;
+  if (status === 'rescued' || status === 'recovered') return IncidentStatus.SAFE;
+  if (status === 'reunited') return IncidentStatus.REUNITED;
+  if (status === 'closed') return IncidentStatus.CLOSED;
+  return status as IncidentStatus;
+};
+
 export const IncidentDetailsPage: React.FC<IncidentDetailsPageProps> = ({
   incidentId,
   incidents,
@@ -65,19 +77,21 @@ export const IncidentDetailsPage: React.FC<IncidentDetailsPageProps> = ({
     );
   }
 
+  const normalizedCurrentStatus = normalizeStatus(incident.status);
+
   // Linear Pipeline Steps representation
   const pipelineSteps: Array<{ status: IncidentStatus; label: string; icon: any; color: string }> = [
-    { status: 'reported', label: 'Reported', icon: Clock, color: 'border-slate-500 bg-slate-500' },
-    { status: 'structured', label: 'AI Structured', icon: Sparkles, color: 'border-purple-500 bg-purple-500' },
-    { status: 'verified', label: 'Verified', icon: Eye, color: 'border-blue-500 bg-blue-500' },
-    { status: 'prioritized', label: 'Triage Ready', icon: Activity, color: 'border-amber-500 bg-amber-500' },
-    { status: 'mission_created', label: 'Active Ops', icon: ShieldAlert, color: 'border-rose-500 bg-rose-500' },
-    { status: 'rescued', label: 'Secured/Rescued', icon: CheckCircle2, color: 'border-emerald-500 bg-emerald-500' },
-    { status: 'recovered', label: 'Stable Foster', icon: Heart, color: 'border-cyan-500 bg-cyan-500' },
-    { status: 'reunited', label: 'Reunited!', icon: Award, color: 'border-yellow-500 bg-yellow-500' }
+    { status: IncidentStatus.NEW, label: 'Reported', icon: Clock, color: 'border-slate-500 bg-slate-500' },
+    { status: IncidentStatus.AI_ANALYZED, label: 'AI Structured', icon: Sparkles, color: 'border-purple-500 bg-purple-500' },
+    { status: IncidentStatus.NEEDS_VERIFICATION, label: 'Triage Ready', icon: Activity, color: 'border-amber-500 bg-amber-500' },
+    { status: IncidentStatus.VERIFIED, label: 'Verified', icon: Eye, color: 'border-blue-500 bg-blue-500' },
+    { status: IncidentStatus.MISSION_CREATED, label: 'Active Ops', icon: ShieldAlert, color: 'border-rose-500 bg-rose-500' },
+    { status: IncidentStatus.RESCUE_IN_PROGRESS, label: 'Rescue Active', icon: Activity, color: 'border-orange-500 bg-orange-500' },
+    { status: IncidentStatus.SAFE, label: 'Secured/Safe', icon: CheckCircle2, color: 'border-emerald-500 bg-emerald-500' },
+    { status: IncidentStatus.REUNITED, label: 'Reunited!', icon: Award, color: 'border-yellow-500 bg-yellow-500' }
   ];
 
-  const currentStepIndex = pipelineSteps.findIndex(s => s.status === incident.status);
+  const currentStepIndex = pipelineSteps.findIndex(s => s.status === normalizedCurrentStatus);
 
   // Status transitions state trigger
   const handleTransitionClick = (status: IncidentStatus) => {
@@ -92,19 +106,20 @@ export const IncidentDetailsPage: React.FC<IncidentDetailsPageProps> = ({
     
     // Auto-log the transition update
     const labels: Record<IncidentStatus, string> = {
-      reported: "Logged report in database.",
-      structured: "Triggered standard AI analytical restructuring.",
-      verified: "Coordinator physically verified details.",
-      prioritized: "Risk assessment completed. Triage parameters finalized.",
-      mission_created: "Launched emergency dispatcher field mission.",
-      rescued: "Cat secured in safety carrier. Threat neutralized.",
-      recovered: "Admitted into veterinary foster station for stable rest.",
-      reunited: "Completed microchip matches. Safely returned home to owner!"
+      [IncidentStatus.NEW]: "Logged report in database.",
+      [IncidentStatus.AI_ANALYZED]: "Triggered standard AI analytical restructuring.",
+      [IncidentStatus.NEEDS_VERIFICATION]: "Coordinator physically verified details.",
+      [IncidentStatus.VERIFIED]: "Risk assessment completed. Triage parameters finalized.",
+      [IncidentStatus.MISSION_CREATED]: "Launched emergency dispatcher field mission.",
+      [IncidentStatus.RESCUE_IN_PROGRESS]: "Field squad is actively conducting scent lures and grid searches.",
+      [IncidentStatus.SAFE]: "Cat secured in safety carrier. Threat neutralized.",
+      [IncidentStatus.REUNITED]: "Completed microchip matches. Safely returned home to owner!",
+      [IncidentStatus.CLOSED]: "Case archived. Incident is resolved."
     };
 
     onAddUpdate(incident.id, {
       author: 'System Auto-Log',
-      message: `Status transitioned to ${targetStatus.replace('_', ' ').toUpperCase()}. Detail: ${labels[targetStatus]}`,
+      message: `Status transitioned to ${targetStatus.replace('_', ' ').toUpperCase()}. Detail: ${labels[targetStatus] || 'Status updated.'}`,
       statusChanged: targetStatus
     });
 
@@ -241,6 +256,84 @@ export const IncidentDetailsPage: React.FC<IncidentDetailsPageProps> = ({
               </p>
             </div>
           </div>
+
+          {/* AI-CORRELATION SIGHTING MATCHES PANEL */}
+          {incident.possibleMatches && incident.possibleMatches.length > 0 && (
+            <div className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 p-6 rounded-2xl shadow-sm space-y-4">
+              <div className="flex items-center justify-between border-b border-amber-500/20 pb-3">
+                <h3 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-amber-500 animate-pulse" />
+                  AI-Correlation Sighting Matches ({incident.possibleMatches.length})
+                </h3>
+                <span className="text-[9px] font-mono font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded-full border border-amber-500/20 uppercase tracking-widest animate-pulse">
+                  Active Sighting Alerts
+                </span>
+              </div>
+
+              <div className="space-y-3">
+                {incident.possibleMatches.map((match) => {
+                  const isConfirmed = normalizedCurrentStatus !== IncidentStatus.NEW && normalizedCurrentStatus !== IncidentStatus.AI_ANALYZED && normalizedCurrentStatus !== IncidentStatus.NEEDS_VERIFICATION;
+                  return (
+                    <div 
+                      key={match.id} 
+                      className={`p-4 rounded-xl border transition-all ${
+                        isConfirmed 
+                          ? 'bg-emerald-500/5 dark:bg-emerald-500/10 border-emerald-500/20 text-slate-800 dark:text-slate-200' 
+                          : 'bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 shadow-sm'
+                      }`}
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400">
+                            Sighting ID: {match.sightingIncidentId}
+                          </span>
+                          <span className={`px-2 py-0.5 rounded-full text-[9px] font-mono font-bold ${
+                            match.confidenceScore >= 90 
+                              ? 'bg-rose-500/10 text-rose-500 border border-rose-500/20' 
+                              : 'bg-amber-500/10 text-amber-500 border border-amber-500/20'
+                          }`}>
+                            {match.confidenceScore}% Confidence Match
+                          </span>
+                        </div>
+
+                        {isConfirmed ? (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-lg">
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            Match Confirmed & Linked
+                          </span>
+                        ) : (
+                          <button
+                            id={`btn-confirm-match-${match.id}`}
+                            onClick={() => {
+                              onUpdateStatus(incident.id, IncidentStatus.VERIFIED);
+                              onAddUpdate(incident.id, {
+                                author: "Coordinator Elena",
+                                message: `Manually confirmed AI match with Sighting ${match.sightingIncidentId}. Case coordinates synchronized, status set to VERIFIED.`,
+                                statusChanged: IncidentStatus.VERIFIED
+                              });
+                            }}
+                            className="px-3 py-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs rounded-lg transition-colors flex items-center gap-1 shadow-sm"
+                          >
+                            <Sparkles className="w-3.5 h-3.5" />
+                            Confirm Match & Verify
+                          </button>
+                        )}
+                      </div>
+
+                      <div className="mt-3 space-y-1.5">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">AI Correlation Telemetry Reasons:</span>
+                        <ul className="text-xs space-y-1 text-slate-600 dark:text-slate-400 list-disc pl-4 leading-relaxed font-semibold">
+                          {match.correlationReasons.map((reason, rIdx) => (
+                            <li key={rIdx}>{reason}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* AI STRUCTURING DETAILS (THE VALUE ADD) */}
           <div className="bg-slate-900 border border-slate-800/80 p-6 rounded-2xl shadow-xl space-y-4 text-white relative overflow-hidden">
@@ -420,27 +513,27 @@ export const IncidentDetailsPage: React.FC<IncidentDetailsPageProps> = ({
             </p>
 
             <div className="flex flex-col gap-2 pt-2">
-              {incident.status === 'reported' && (
+              {(normalizedCurrentStatus === IncidentStatus.NEW || normalizedCurrentStatus === IncidentStatus.AI_ANALYZED) && (
                 <button
                   id="action-btn-verify"
-                  onClick={() => handleTransitionClick('verified')}
+                  onClick={() => handleTransitionClick(IncidentStatus.VERIFIED)}
                   className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl transition-all"
                 >
                   Verify Sighting Information
                 </button>
               )}
 
-              {incident.status === 'verified' && (
+              {normalizedCurrentStatus === IncidentStatus.NEEDS_VERIFICATION && (
                 <button
                   id="action-btn-prioritize"
-                  onClick={() => handleTransitionClick('prioritized')}
+                  onClick={() => handleTransitionClick(IncidentStatus.VERIFIED)}
                   className="w-full py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs rounded-xl transition-all"
                 >
-                  Authorize Triage / Prioritize
+                  Verify Possible Match & Sighting
                 </button>
               )}
 
-              {incident.status === 'prioritized' && onLaunchMissionForIncident && (
+              {normalizedCurrentStatus === IncidentStatus.VERIFIED && onLaunchMissionForIncident && (
                 <button
                   id="action-btn-dispatch"
                   onClick={() => onLaunchMissionForIncident(incident)}
@@ -450,27 +543,42 @@ export const IncidentDetailsPage: React.FC<IncidentDetailsPageProps> = ({
                 </button>
               )}
 
-              {incident.status === 'rescued' && (
+              {normalizedCurrentStatus === IncidentStatus.MISSION_CREATED && (
+                <div className="bg-slate-950 p-4 rounded-xl text-center text-xs text-amber-400 space-y-1 border border-slate-800">
+                  <Activity className="w-5 h-5 mx-auto mb-1 animate-pulse" />
+                  <p className="font-bold">Rescue Operation Dispatched</p>
+                  <p className="text-[10px] text-slate-500">Responders are actively executing containment scent-lures.</p>
+                  <button
+                    id="action-btn-secure-direct"
+                    onClick={() => handleTransitionClick(IncidentStatus.SAFE)}
+                    className="w-full mt-2 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[10px] rounded-lg transition-all"
+                  >
+                    Transition to Cat Secured/Safe
+                  </button>
+                </div>
+              )}
+
+              {normalizedCurrentStatus === IncidentStatus.RESCUE_IN_PROGRESS && (
                 <button
-                  id="action-btn-recovery"
-                  onClick={() => handleTransitionClick('recovered')}
+                  id="action-btn-secure-progress"
+                  onClick={() => handleTransitionClick(IncidentStatus.SAFE)}
                   className="w-full py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs rounded-xl transition-all"
                 >
-                  Admit into Safe Foster Haven
+                  Mark Feline Safely Secured
                 </button>
               )}
 
-              {incident.status === 'recovered' && (
+              {normalizedCurrentStatus === IncidentStatus.SAFE && (
                 <button
                   id="action-btn-reunite"
-                  onClick={() => handleTransitionClick('reunited')}
+                  onClick={() => handleTransitionClick(IncidentStatus.REUNITED)}
                   className="w-full py-2.5 bg-yellow-600 hover:bg-yellow-500 text-slate-900 font-bold text-xs rounded-xl transition-all"
                 >
                   Confirm Owner Reunification (Close case)
                 </button>
               )}
 
-              {incident.status === 'reunited' && (
+              {normalizedCurrentStatus === IncidentStatus.REUNITED && (
                 <div className="bg-emerald-950/30 border border-emerald-900/40 p-4 rounded-xl text-center text-xs text-emerald-400 space-y-1">
                   <CheckCircle2 className="w-6 h-6 mx-auto mb-1" />
                   <p className="font-bold">Mission Successfully Accomplished</p>
@@ -481,7 +589,7 @@ export const IncidentDetailsPage: React.FC<IncidentDetailsPageProps> = ({
               {/* General action button reset simulation */}
               <button
                 id="action-btn-reset"
-                onClick={() => handleTransitionClick('reported')}
+                onClick={() => handleTransitionClick(IncidentStatus.NEW)}
                 className="w-full py-2 text-[10px] text-slate-500 hover:text-slate-400 font-mono border border-slate-800 hover:border-slate-700 bg-slate-950 rounded-lg transition-all"
               >
                 Reset to Reported status (Simulate)

@@ -26,6 +26,18 @@ interface CrisisMapPageProps {
   onNavigateToReport: () => void;
 }
 
+const normalizeStatus = (status: string | IncidentStatus): IncidentStatus => {
+  if (status === 'reported') return IncidentStatus.NEW;
+  if (status === 'structured') return IncidentStatus.AI_ANALYZED;
+  if (status === 'prioritized') return IncidentStatus.NEEDS_VERIFICATION;
+  if (status === 'verified') return IncidentStatus.VERIFIED;
+  if (status === 'mission_created') return IncidentStatus.MISSION_CREATED;
+  if (status === 'rescued' || status === 'recovered') return IncidentStatus.SAFE;
+  if (status === 'reunited') return IncidentStatus.REUNITED;
+  if (status === 'closed') return IncidentStatus.CLOSED;
+  return status as IncidentStatus;
+};
+
 export const CrisisMapPage: React.FC<CrisisMapPageProps> = ({ 
   incidents, 
   onSelectIncident,
@@ -50,8 +62,25 @@ export const CrisisMapPage: React.FC<CrisisMapPageProps> = ({
                             inc.location.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                             inc.catDescription.color.toLowerCase().includes(searchTerm.toLowerCase());
       
-      const matchesUrgency = urgencyFilter === 'all' || inc.urgency === urgencyFilter;
-      const matchesStatus = statusFilter === 'all' || inc.status === statusFilter;
+      const matchesUrgency = urgencyFilter === 'all' || 
+                             inc.urgency === urgencyFilter || 
+                             (urgencyFilter === 'critical' && inc.urgency === 'CRITICAL') ||
+                             (urgencyFilter === 'high' && inc.urgency === 'HIGH') ||
+                             (urgencyFilter === 'medium' && inc.urgency === 'MEDIUM') ||
+                             (urgencyFilter === 'low' && inc.urgency === 'LOW');
+                             
+      const norm = normalizeStatus(inc.status);
+      const matchesStatus = statusFilter === 'all' || 
+                            norm === statusFilter || 
+                            inc.status === statusFilter ||
+                            (statusFilter === 'reported' && norm === IncidentStatus.NEW) ||
+                            (statusFilter === 'structured' && norm === IncidentStatus.AI_ANALYZED) ||
+                            (statusFilter === 'verified' && norm === IncidentStatus.VERIFIED) ||
+                            (statusFilter === 'prioritized' && norm === IncidentStatus.NEEDS_VERIFICATION) ||
+                            (statusFilter === 'mission_created' && norm === IncidentStatus.MISSION_CREATED) ||
+                            (statusFilter === 'rescued' && norm === IncidentStatus.SAFE) ||
+                            (statusFilter === 'recovered' && norm === IncidentStatus.SAFE) ||
+                            (statusFilter === 'reunited' && norm === IncidentStatus.REUNITED);
       
       return matchesSearch && matchesUrgency && matchesStatus;
     });

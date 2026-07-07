@@ -20,6 +20,7 @@ import {
 import { Incident, Mission, Rescuer, ToastMessage, IncidentStatus, IncidentUpdate } from './types';
 import { INITIAL_INCIDENTS, INITIAL_MISSIONS, REGISTERED_RESCUERS } from './data';
 import { ToastContainer } from './components/UI';
+import { MisoStorySimulator } from './components/MisoStorySimulator';
 
 // Pages
 import { LandingPage } from './pages/LandingPage';
@@ -445,6 +446,19 @@ export default function App() {
           </div>
         )}
       </header>
+
+      {/* GLOBAL WALKTHROUGH SIMULATOR BANNER */}
+      <MisoStorySimulator
+        incidents={incidents}
+        setIncidents={setIncidents}
+        missions={missions}
+        setMissions={setMissions}
+        rescuers={rescuers}
+        setRescuers={setRescuers}
+        addToast={addToast}
+        onNavigateToIncident={handleViewIncidentDetails}
+        onNavigate={setActivePage}
+      />
 
       {/* RENDER CURRENT PAGE STAGE */}
       <main className="flex-1">

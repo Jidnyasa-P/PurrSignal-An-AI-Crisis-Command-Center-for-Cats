@@ -33,6 +33,18 @@ interface MissionControlPageProps {
   onUpdateIncidentStatus: (id: string, status: IncidentStatus) => void;
 }
 
+const normalizeStatus = (status: string | IncidentStatus): IncidentStatus => {
+  if (status === 'reported') return IncidentStatus.NEW;
+  if (status === 'structured') return IncidentStatus.AI_ANALYZED;
+  if (status === 'prioritized') return IncidentStatus.NEEDS_VERIFICATION;
+  if (status === 'verified') return IncidentStatus.VERIFIED;
+  if (status === 'mission_created') return IncidentStatus.MISSION_CREATED;
+  if (status === 'rescued' || status === 'recovered') return IncidentStatus.SAFE;
+  if (status === 'reunited') return IncidentStatus.REUNITED;
+  if (status === 'closed') return IncidentStatus.CLOSED;
+  return status as IncidentStatus;
+};
+
 export const MissionControlPage: React.FC<MissionControlPageProps> = ({
   incidents,
   missions,
@@ -73,19 +85,22 @@ export const MissionControlPage: React.FC<MissionControlPageProps> = ({
 
   // FILTER UNASSIGNED INCIDENTS (incidents needing missions)
   const unassignedIncidents = useMemo(() => {
-    // Incidents without active missions (e.g. status != 'mission_created' or 'rescued' etc, or simply not referenced in missions)
     const missionIncidentIds = missions.filter(m => m.status === 'active').map(m => m.incidentId);
-    return incidents.filter(inc => 
-      !missionIncidentIds.includes(inc.id) && 
-      inc.status !== 'rescued' && 
-      inc.status !== 'recovered' && 
-      inc.status !== 'reunited'
-    );
+    return incidents.filter(inc => {
+      const norm = normalizeStatus(inc.status);
+      return !missionIncidentIds.includes(inc.id) && 
+        norm !== IncidentStatus.SAFE && 
+        norm !== IncidentStatus.REUNITED && 
+        norm !== IncidentStatus.CLOSED;
+    });
   }, [incidents, missions]);
 
   // STATS CALCULATIONS
   const openIncidentsCount = useMemo(() => {
-    return incidents.filter(i => i.status !== 'reunited' && i.status !== 'recovered').length;
+    return incidents.filter(i => {
+      const norm = normalizeStatus(i.status);
+      return norm !== IncidentStatus.REUNITED && norm !== IncidentStatus.CLOSED;
+    }).length;
   }, [incidents]);
 
   const activeMissionsCount = useMemo(() => {
@@ -144,7 +159,7 @@ export const MissionControlPage: React.FC<MissionControlPageProps> = ({
     });
 
     // Auto update incident status
-    onUpdateIncidentStatus(selectedIncidentId, 'mission_created');
+    onUpdateIncidentStatus(selectedIncidentId, IncidentStatus.MISSION_CREATED);
 
     // Reset Form
     setSelectedIncidentId('');
@@ -180,7 +195,7 @@ export const MissionControlPage: React.FC<MissionControlPageProps> = ({
   // Complete Mission Ops Flow
   const handleCompleteMission = (mId: string, incId: string) => {
     onUpdateMissionStatus(mId, 'completed');
-    onUpdateIncidentStatus(incId, 'rescued');
+    onUpdateIncidentStatus(incId, IncidentStatus.SAFE);
     setIsManageModalOpen(false);
     setActiveManageMission(null);
   };

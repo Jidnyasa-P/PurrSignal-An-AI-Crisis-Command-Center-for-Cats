@@ -17,19 +17,25 @@ import {
   ExternalLink,
   Cat
 } from 'lucide-react';
-import { Incident, Mission, IncidentStatus, UrgencyLevel, ToastMessage } from '../types';
+import { Incident, Mission, IncidentStatus, UrgencyLevel, ToastMessage, Urgency } from '../types';
 
 // ==========================================
 // STATUS BADGE
 // ==========================================
 interface StatusBadgeProps {
-  status: IncidentStatus;
+  status: IncidentStatus | string;
   size?: 'sm' | 'md';
 }
 
 export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'md' }) => {
-  const config: Record<IncidentStatus, { bg: string; text: string; label: string; icon: any }> = {
+  const config: Record<string, { bg: string; text: string; label: string; icon: any }> = {
     reported: { 
+      bg: 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800/60 dark:text-slate-300 dark:border-slate-700/50', 
+      text: 'text-slate-700 dark:text-slate-300',
+      label: 'Reported', 
+      icon: Clock 
+    },
+    [IncidentStatus.NEW]: { 
       bg: 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800/60 dark:text-slate-300 dark:border-slate-700/50', 
       text: 'text-slate-700 dark:text-slate-300',
       label: 'Reported', 
@@ -41,7 +47,19 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'md' })
       label: 'AI Structured', 
       icon: Activity 
     },
+    [IncidentStatus.AI_ANALYZED]: { 
+      bg: 'bg-purple-50 text-purple-700 border-purple-100 dark:bg-purple-950/40 dark:text-purple-300 dark:border-purple-900/50', 
+      text: 'text-purple-700 dark:text-purple-300',
+      label: 'AI Structured', 
+      icon: Activity 
+    },
     verified: { 
+      bg: 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-900/50', 
+      text: 'text-blue-700 dark:text-blue-300',
+      label: 'Verified Sighting', 
+      icon: Eye 
+    },
+    [IncidentStatus.VERIFIED]: { 
       bg: 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-900/50', 
       text: 'text-blue-700 dark:text-blue-300',
       label: 'Verified Sighting', 
@@ -50,7 +68,13 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'md' })
     prioritized: { 
       bg: 'bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-900/50', 
       text: 'text-amber-700 dark:text-amber-300',
-      label: 'Triage Complete', 
+      label: 'Needs Verification', 
+      icon: AlertTriangle 
+    },
+    [IncidentStatus.NEEDS_VERIFICATION]: { 
+      bg: 'bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-900/50', 
+      text: 'text-amber-700 dark:text-amber-300',
+      label: 'Needs Verification', 
       icon: AlertTriangle 
     },
     mission_created: { 
@@ -59,10 +83,28 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'md' })
       label: 'Active Mission', 
       icon: ShieldAlert 
     },
+    [IncidentStatus.MISSION_CREATED]: { 
+      bg: 'bg-rose-50 text-rose-700 border-rose-100 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-900/50', 
+      text: 'text-rose-700 dark:text-rose-300',
+      label: 'Active Mission', 
+      icon: ShieldAlert 
+    },
+    [IncidentStatus.RESCUE_IN_PROGRESS]: { 
+      bg: 'bg-amber-50 text-amber-700 border-amber-100 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-900/50', 
+      text: 'text-amber-700 dark:text-amber-300',
+      label: 'Rescue In Progress', 
+      icon: Activity 
+    },
     rescued: { 
       bg: 'bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-900/50', 
       text: 'text-emerald-700 dark:text-emerald-300',
       label: 'Secured/Rescued', 
+      icon: CheckCircle2 
+    },
+    [IncidentStatus.SAFE]: { 
+      bg: 'bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-900/50', 
+      text: 'text-emerald-700 dark:text-emerald-300',
+      label: 'Secured/Safe', 
       icon: CheckCircle2 
     },
     recovered: { 
@@ -76,10 +118,22 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'md' })
       text: 'text-yellow-700 dark:text-yellow-300',
       label: 'Reunited!', 
       icon: Award 
+    },
+    [IncidentStatus.REUNITED]: { 
+      bg: 'bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-950/40 dark:text-yellow-300 dark:border-yellow-900/50', 
+      text: 'text-yellow-700 dark:text-yellow-300',
+      label: 'Reunited!', 
+      icon: Award 
+    },
+    [IncidentStatus.CLOSED]: { 
+      bg: 'bg-slate-100 text-slate-500 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700', 
+      text: 'text-slate-500 dark:text-slate-400',
+      label: 'Closed / Inactive', 
+      icon: XCircle 
     }
   };
 
-  const current = config[status] || config.reported;
+  const current = config[status] || config.reported || config[IncidentStatus.NEW];
   const Icon = current.icon;
   const sizeClasses = size === 'sm' ? 'px-2 py-0.5 text-xs font-semibold' : 'px-3 py-1 text-sm font-semibold';
 
@@ -95,13 +149,20 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, size = 'md' })
 // URGENCY INDICATOR
 // ==========================================
 interface UrgencyIndicatorProps {
-  urgency: UrgencyLevel;
+  urgency: UrgencyLevel | Urgency;
   showText?: boolean;
 }
 
 export const UrgencyIndicator: React.FC<UrgencyIndicatorProps> = ({ urgency, showText = true }) => {
-  const config: Record<UrgencyLevel, { bg: string; text: string; glow: string; label: string; icon: any }> = {
+  const config: Record<string, { bg: string; text: string; glow: string; label: string; icon: any }> = {
     low: { 
+      bg: 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400', 
+      text: 'text-slate-600 dark:text-slate-400', 
+      glow: '', 
+      label: 'Routine', 
+      icon: Info 
+    },
+    [Urgency.LOW]: { 
       bg: 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400', 
       text: 'text-slate-600 dark:text-slate-400', 
       glow: '', 
@@ -115,7 +176,21 @@ export const UrgencyIndicator: React.FC<UrgencyIndicatorProps> = ({ urgency, sho
       label: 'Moderate', 
       icon: Clock 
     },
+    [Urgency.MEDIUM]: { 
+      bg: 'bg-sky-50 dark:bg-sky-950/40 text-sky-600 dark:text-sky-400', 
+      text: 'text-sky-600 dark:text-sky-400', 
+      glow: '', 
+      label: 'Moderate', 
+      icon: Clock 
+    },
     high: { 
+      bg: 'bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400', 
+      text: 'text-orange-600 dark:text-orange-400', 
+      glow: '', 
+      label: 'High Urgency', 
+      icon: AlertTriangle 
+    },
+    [Urgency.HIGH]: { 
       bg: 'bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400', 
       text: 'text-orange-600 dark:text-orange-400', 
       glow: '', 
@@ -128,10 +203,17 @@ export const UrgencyIndicator: React.FC<UrgencyIndicatorProps> = ({ urgency, sho
       glow: 'shadow-lg shadow-red-500/20', 
       label: 'CRITICAL', 
       icon: ShieldAlert 
+    },
+    [Urgency.CRITICAL]: { 
+      bg: 'bg-red-50 dark:bg-red-950/50 text-red-600 dark:text-red-400 border-red-200 dark:border-red-900/60 animate-pulse-glow', 
+      text: 'text-red-600 dark:text-red-400 font-bold', 
+      glow: 'shadow-lg shadow-red-500/20', 
+      label: 'CRITICAL', 
+      icon: ShieldAlert 
     }
   };
 
-  const current = config[urgency] || config.low;
+  const current = config[urgency] || config.low || config[Urgency.LOW];
   const Icon = current.icon;
 
   return (
