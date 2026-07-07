@@ -1,0 +1,6 @@
+{
+  "name": "PurrSignal",
+  "description": "AI-assisted crisis coordination platform for cats. Turn fragmented report and sighting information into coordinated, prioritized cat rescue missions.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
