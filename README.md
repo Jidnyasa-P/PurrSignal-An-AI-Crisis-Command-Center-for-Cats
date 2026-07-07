@@ -1,308 +1,238 @@
-# 🐾 PurrSignal
+# 🐾 PurrSignal ──────────────────────────────────────────
 
-PurrSignal is a highly sophisticated, full-stack, AI-assisted crisis coordination platform designed specifically for cat rescue, tracing, and reunification. It bridges the gap between fragmented public community sighting data and active on-the-ground professional volunteer response. By transforming unorganized, chaotic incident reports into structured, prioritizable operational dispatches, PurrSignal ensures that trapped, lost, or injured cats are rescued swiftly and safely.
+```text
+    _._     _,-'""`-._
+   (,-.`._,'(       |\`-/|     ⚡ PURRSIGNAL TELEMETRY SYSTEM v2.5
+       `-.-' \ )-`( , o o)     ⚡ EMERGENCY LOCATOR & RESCUE CO-PILOT
+             `-    \`_`"'-     ⚡ CAT REUNIFICATION COMMAND NETWORK
+```
+
+> **Direct, structured, intelligence-driven emergency dispatch networks for feline rescue. Bridging community sightings with professional rescue operations using Gemini-powered forensics.**
+
+---
+
+### 🌐 Live Platform Access
+* **Development Command Bridge**: [Launch Platform](https://ais-dev-e6cfv5rpsbtpgz4nrru4qk-461622340415.asia-southeast1.run.app)
+* **Production Sandbox**: [View Shared Portal](https://ais-pre-e6cfv5rpsbtpgz4nrru4qk-461622340415.asia-southeast1.run.app)
 
 ---
 
 ## 📌 Problem Statement
 
-In times of natural disasters, localized accidents, or simple neighborhood escapes, feline emergency reporting is heavily fragmented. Crowdsourced reports exist across multiple non-syndicated public streams—such as Facebook local groups, Nextdoor, email lists, and public SMS boards. This leads to critical challenges:
+Feline emergency and rescue reporting is plagued by chaotic, fragmented data streams. When natural disasters strike or household pets escape, sighting data accumulates across fractured channels—unorganized Facebook threads, neighborhood Nextdoor posts, localized SMS boards, and messy emails.
 
-1. **Information Asymmetry**: Crucial visual markers (such as coat pattern, collar detail, or ear-notches) are often poorly captured or omitted by frantic reporters.
-2. **Prioritization Paralysis**: Volunteers cannot easily distinguish between a low-risk stable stray and a high-risk life-threatening emergency (e.g., a cat trapped in a municipal storm drain hours before a heavy storm).
-3. **Loss of Continuity**: Sightings of the same cat are reported independently across disparate coordinates, resulting in multiple disjointed search circles instead of an actionable chronological path.
-4. **Cooperator Fatigue**: Operational dispatchers spend hours manually formatting, cross-matching, and organizing volunteer shift-handoff briefings instead of coordinating actual field efforts.
-
----
-
-## 📌 Solution
-
-PurrSignal solves this coordination problem through a resilient, real-time command portal structured around three main agents:
-* **The Community (The Public)**: Seamlessly logs incidents or sightings through responsive, geolocated forms supporting multimodal (photo + text) inputs.
-* **The AI Core (Gemini 3.5 Flash)**: Acts as an instant visual forensic examiner, structuring coat characteristics, evaluating threat levels, extracting distinctive hallmarks, and highlighting medical boundaries safely.
-* **The Coordinators & Rescuers (Field Ops)**: Uses an interactive command dashboard featuring a custom spatial-temporal sighting sequence tracker, automated matching correlation scoring, and an interactive AI copilot.
+* **Forensic Decay**: Crucial details like coat patterns, visual ear-notches (indicating TNR status), collars, and medical conditions are omitted by anxious reporters.
+* **Operational Blindness**: Rescue coordinators cannot easily distinguish between a comfortable stray and a cat in critical danger (e.g., an injured cat trapped in a rising storm drain).
+* **Disconnected Chronology**: Sightings of the same animal are logged as isolated events, hiding migratory movement vectors.
+* **Volunteer Fatigue**: Shift transitions and coordinator handoffs consume hours of manual collation rather than tactical field deployment.
 
 ---
 
-## 📌 Key Features
+## 📌 The PurrSignal Protocol
 
-### 1. Interactive Landing Page & Miso Story Simulator
-* **Live Operational Ticker**: Displays up-to-the-minute platform-wide performance indices, including **Active Missions**, **Successful Reunions**, **Mobilized Rescuers**, and **Telemetry Signal Reliability**.
-* **Interactive Storyline Simulator**: A visual interactive emulator that recreates "Miso’s" (an orange tabby) high-fidelity escape and rescue journey, demonstrating scent-baiting, wildlife camera mapping, humane trapping, and reunion handshakes to train new volunteers.
-
-### 2. High-Fidelity Custom Crisis Map (`CrisisMapPage`)
-* **Responsive Vector Stage**: Built entirely on top of high-performance interactive SVGs that feature drag-and-drop panning, smooth scroll-zooming, and live category toggle filters (e.g., Traps, Active Patrols, Sighting Hotspots, Missing Reports).
-* **Sequential Sighting Trails**: Dynamic motion-guided lines that connect consecutive sightings of the same feline chronologically (Sighting #1 ➡️ Sighting #2 ➡️ Sighting #3), showing directional vector arrows to project the animal's migration path.
-* **Interactive Heatmaps**: Aggregates local coordinate weights to display density clusters of feline sightings, enabling teams to deploy traps strategically.
-
-### 3. Multimodal Incident Reporting (`ReportIncidentPage`)
-* **Two-Way Channel Layout**: Supports standard community reports and professional responder logs with deep validation hooks.
-* **Interactive Map Pin Placement**: Users can double-click or drag a responsive indicator to precise lat/lng coordinates to record accurate sighting telemetry.
-* **Multimodal Upload Container**: Accepts image attachments alongside narrative text, dispatching them to server-side AI engines for visual structure evaluation.
-
-### 4. Coordinator Command Center & Dispatcher Dashboard (`MissionControlPage`)
-* **Intelligent Sighting Matcher**: Calculates and suggests high-compatibility matches by comparing physical coat patterns, distance boundaries, and temporal time-drifts (e.g., matching a newly reported "orange tabby sighting" with a "missing ginger cat report" registered 150m away).
-* **Mission Dispatch Launcher**: Coordinators can schedule urgent operations, log required gear lists (e.g., humane traps, wild wet bait, micro-lens trail cameras, thermal heat pads), and assign registered rescuers.
-* **Active Volunteers Directory**: Tracks real-time availability, role levels (Coordinator, Volunteer, Rescuer), and active mission assignments.
-
-### 5. AI Copilot Terminal Station (`RescueCopilotPage`)
-* **Read-Only Database Query Hooks**: Interacts with live application states to instantly fetch and summarize critical incidents, detect unassigned operations, and extract historic sighting correlations.
-* **Shift Change Handoff Generator**: Synthesizes today's active tactical changes, recent volunteer updates, and pending alerts into an elegant SITREP (Situation Report) markdown block for incoming rescue captains.
-* **Human-in-the-Loop Safeguard**: Prevents unauthorized database alterations. Sensitive commands (e.g., "Assign Lily Potter to Mission Miso") are drafted by the copilot, prompting coordinators for manual signature verification before execution.
-
----
-
-## 📌 AI Capabilities
-
-PurrSignal leverages the state-of-the-art `@google/genai` TypeScript SDK on the server side to power its intelligent analysis.
+PurrSignal organizes chaotic emergency indicators into structured, prioritized, and actionable operational dispatches. It standardizes the workflow from first sighting to final safety handshake.
 
 ```
-       [Public Upload] 
-   (Image + Narrative Notes)
-              │
-              ▼
-    ┌──────────────────┐
-    │  server.ts API   │ ◄─── System Instructions (Vet Boundaries & Visual Uncertainty)
-    └────────┬─────────┘
-             │ (Google GenAI SDK)
-             ▼
-    ┌──────────────────┐
-    │ gemini-3.5-flash │
-    └────────┬─────────┘
-             │ (Structured Output via responseSchema)
-             ▼
-    ┌──────────────────┐
-    │ JSON Output Payload ◄─── (Coat Details, Urgency Levels, Action Recommendations)
-    └──────────────────┘
+       [Community Report] ──► (BLURRY PHOTO + TEXT)
+                                     │
+                                     ▼
+                      ┌─────────────────────────────┐
+                      │    Gemini Visual Core       │
+                      │  * Extracts Coat Analytics  │
+                      │  * Evaluates Urgency Levels │
+                      │  * Appends Vet Safeguards   │
+                      └──────────────┬──────────────┘
+                                     │
+                                     ▼
+                     ┌──────────────────────────────┐
+                     │  Mission Control Center      │
+                     │  * Calculates Compatibility  │
+                     │  * Draws Sequential Trails   │
+                     │  * Generates SITREPs         │
+                     └──────────────┬──────────────┘
+                                     │
+                                     ▼
+                             [CAT REUNIFIED] 🐾
 ```
 
-### 1. Multimodal Forensic Image Analysis
-When a photo is attached to an incident report, the backend transfers the raw base64 buffer directly to the `gemini-3.5-flash` model. The AI inspects the feline’s physical characteristics, analyzing:
-* **Primary and Secondary Coat Colors** (e.g., Orange, White, Gray, Tuxedo).
-* **Patterns** (Tabby, Solid, Tortoiseshell, Calico).
-* **Visual Hallmarks** (ear notches indicating a spayed/neutered feral, collars, visible wounds).
+---
 
-### 2. Structured Outputs via Strict Schema Mapping
-To guarantee that the frontend receives reliable data, we employ `responseMimeType: "application/json"` combined with a strict `responseSchema` definition. The JSON structure guarantees typing for parameters like `incidentType`, `urgency` (MUST be 'CRITICAL', 'HIGH', 'MEDIUM', or 'LOW'), and specific arrays for `urgencyReasons` and `uncertainties`.
+## 📌 Features in Detail
 
-### 3. Safety Compliance & Clinical Guardrails
-As a responsible AI assistant, PurrSignal enforces rigid veterinary and visual boundaries in its system instructions:
-1. **No Vet Diagnostics**: The AI is forbidden from diagnosing diseases or severe injuries. If a cat is injured, it flags the urgency but demands human inspection.
-2. **Visual Uncertainty Acknowledgment**: The system enforces language such as *"may indicate"*, *"possible duplicate"*, or *"visual identification is never certain"* to prevent false ownership hopes.
-3. **Emergency Redirection**: For immediate critical situations, it prompts coordinators to contact municipal emergency services.
+### 1. 🗺️ Custom Spatial Crisis Map
+An interactive vector-driven tracking grid crafted directly with reactive SVG stages:
+* **Sequential Sighting Trails**: Motion-mapped vectors connect multiple sightings chronologically ($S_1 \rightarrow S_2 \rightarrow S_3$), plotting vector heading lines to anticipate movement.
+* **Interactive Map Toggles**: Instantly filter map layers to show Traps set, Active Patrols, Sighting Hotspots, or Missing Reports.
+* **Dynamic Geocoding Jitter**: Seamless double-click-to-pin mapping with built-in location privacy boundaries.
+
+### 2. 📝 Forensic Incident Form
+A dual-channel intake portal for the public and rescue professionals:
+* **Multimodal Uploads**: Accepts community-submitted photos directly alongside narrative field notes.
+* **Real-time Geo-locators**: Pins coordinates to municipal safety corridors, protecting residential addresses while preserving spatial accuracy.
+
+### 3. 🖥️ Mission Control & Matching Engine
+A unified operations command terminal for rescue captains:
+* **Correlation Scorer**: Evaluates proximity, time delta, and phenotypic features (e.g., "Tabby", "Tuxedo", "Calico") to auto-suggest matches.
+* **Tactical Dispatcher**: Prepares active mission folders containing required toolsets (e.g., wildlife cameras, scent baits, safe traps) and assigns certified on-call field rescuers.
+
+### 4. 💬 AI Copilot Terminal
+An interactive workspace supporting instant natural-language interrogation:
+* **System SITREP Generator**: Formulates professional, comprehensive markdown briefings of today's status metrics, pending updates, and active alerts for shift-change logs.
+* **Human-in-the-Loop Actions**: Safety safeguards prevent the copilot from executing data-mutating operations without explicit manual coordinator confirmation.
+
+### 5. 🏡 Guardian Plan & Resource Center
+Empowers the community with actionable preparedness tools:
+* **Interactive Flyer Builder**: Instantly generates beautiful missing cat posters with a dynamic printable preview.
+* **Trapping Guides**: Structured, step-by-step instructions for baiting, safety handling, and veterinary protocols.
+
+---
+
+## 📌 AI System Architecture
+
+PurrSignal leverages the official `@google/genai` TypeScript SDK on the server side to handle forensic inputs securely.
+
+```text
+   +-----------------------+              +------------------------+
+   |   Narrative Notes     |              |     Blurry Photo       |
+   +-----------+-----------+              +-----------+------------+
+               |                                      |
+               +------------------+-------------------+
+                                  |
+                                  ▼
+                     +──────────────────────────+
+                     |    server.ts POST Route  |
+                     +────────────+─────────────+
+                                  | (Google GenAI SDK)
+                                  ▼
+                     +──────────────────────────+
+                     |    gemini-3.5-flash      |
+                     +────────────+─────────────+
+                                  | (System Instructions & Structured Schema)
+                                  ▼
+                     +──────────────────────────+
+                     |  Structured Output JSON  |
+                     +──────────────────────────+
+```
+
+### 🛡️ Guardrails & Safety Parameters
+Our system instructions enforce high-fidelity safety standards:
+1. **Clinical Non-Diagnosis**: The AI is forbidden from making diagnostic assessments. Visible physical issues trigger high-urgency flags but require human professional examination.
+2. **Visual Uncertainty**: The model always qualifies matches using soft phrases (*"visual analysis indicates possible duplicate"*, *"subject to visual degradation"*) to keep expectations grounded.
+3. **Emergency Redirection**: Critical non-animal risks are flagged for immediate redirection to city fire/medical services.
 
 ---
 
 ## 📌 Tech Stack
 
-| Layer | Technology | Purpose |
-| :--- | :--- | :--- |
-| **Frontend** | React 19, TypeScript 5.8 | High-fidelity interactive UI with strict compile-time safety. |
-| **Styling** | Tailwind CSS v4 | Utility-first, responsive, beautiful typography (Inter / JetBrains Mono). |
-| **Animations**| `motion` (Framer Motion) | Micro-interactions, slide drawers, story simulator step transitions. |
-| **Backend** | Node.js, Express 4.21 | Server-side routing, API endpoints, static file serving. |
-| **AI Engine** | `@google/genai` (Gemini 3.5 Flash) | Multimodal visual forensics, structured analysis, copilot queries. |
-| **Icons** | `lucide-react` | Unified visual indicator library. |
-| **Build System**| Vite 6, `esbuild`, `tsx` | Ultra-fast HMR-free development bundling, self-contained server compilation. |
+```text
+  FRONTEND           BACKEND / RUNTIME      AI SERVICE         MAPS & GEODATA
+  ┌────────────────┐ ┌────────────────┐ ┌────────────────┐ ┌────────────────┐
+  │  React 19      │ │  Node.js       │ │  Gemini 3.5    │ │  Interactive   │
+  │  TypeScript 5  │ │  Express 4.21  │ │  GenAI SDK     │ │  Reactive SVG  │
+  │  Tailwind CSS  │ │  esbuild       │ │  Structured    │ │  Sequential    │
+  │  motion        │ │  tsx           │ │  JSON Schemas  │ │  Path Trails   │
+  └────────────────┘ └────────────────┘ └────────────────┘ └────────────────┘
+```
 
 ---
 
-## 📌 Project Structure
+## 📌 Project Directory Structure
 
-```
-├── .env.example              # Sample configuration of environmental variables
-├── .gitignore                # Production ignored build artifacts
-├── index.html                # Main SPA entry point
-├── metadata.json             # Applet descriptor containing permissions and capabilities
-├── package.json              # Dependency declarations and build command scripts
-├── server.ts                 # Express full-stack entry point & Gemini API endpoints
-├── tsconfig.json             # TypeScript rules configuration
-├── vite.config.ts            # Vite server and bundler integration plugins
-└── src                       # Application Frontend Code
-    ├── main.tsx              # React mounting root
-    ├── index.css             # Global Tailwind stylesheets and font definitions
-    ├── App.tsx               # Master router, page state machine, and navigation
-    ├── types.ts              # Central database schemas, roles, and status enums
-    ├── data.ts               # Seed database values and chronological demonstration logs
+```text
+├── .env.example              # Environment variables template
+├── .gitignore                # Production ignore listing
+├── index.html                # Single-page application mounting page
+├── metadata.json             # AI Studio platform capabilities configuration
+├── package.json              # Build scripts and dependency configurations
+├── server.ts                 # Express full-stack backend & Google GenAI router
+├── tsconfig.json             # TypeScript compiler constraints
+├── vite.config.ts            # Vite asset pipeline configuration
+└── src                       # Source Code
+    ├── main.tsx              # React mounting file
+    ├── index.css             # Unified tailwind rules and elegant font importing
+    ├── App.tsx               # Master router and active page state controller
+    ├── types.ts              # Core TypeScript interfaces & incident metrics
+    ├── data.ts               # Chronological seed data, historic match cases, logs
     ├── components            # Reusable UI Blocks
-    │   ├── Logo.tsx          # High-fidelity SVG PurrSignal Brand Logo
-    │   ├── ThreeDCat.tsx     # Stylized, interactive vector feline placeholder
-    │   ├── MisoStorySimulator.tsx # interactive storyline simulation engine
-    │   └── UI.tsx            # Alert boxes, forms, and custom toast indicators
-    └── pages                 # Screen Layout components
-        ├── LandingPage.tsx   # Platform landing board & metrics tickers
-        ├── CrisisMapPage.tsx # Customized spatial SVG interactive tracking map
-        ├── ReportIncidentPage.tsx # Geolocated form featuring Gemini multimodal uploads
-        ├── MissionControlPage.tsx # Matching correlations engine and dispatches launcher
-        ├── RescueCopilotPage.tsx  # Natural language analytics terminal & SITREP generator
-        ├── GuardianPlanPage.tsx   # Emergency preparedness builder & printable pet flyers
-        └── TrustSafetyPage.tsx    # Safety compliance resources and search protocols
+    │   ├── Logo.tsx          # High-fidelity SVG logo with interactive heart accents
+    │   ├── ThreeDCat.tsx     # Custom vector feline loader
+    │   ├── MisoStorySimulator.tsx  # Dynamic rescue storyline emulator
+    │   └── UI.tsx            # Floating toast messages and notification bars
+    └── pages                 # Primary Page Layouts
+        ├── LandingPage.tsx   # Portal overview & dynamic metrics ticking metrics
+        ├── CrisisMapPage.tsx # Location tracking map, heatmap grids, sequential trails
+        ├── ReportIncidentPage.tsx # Geolocated form & Gemini visual forensic handler
+        ├── MissionControlPage.tsx # Match correlation engine & tactical dispatches
+        ├── RescueCopilotPage.tsx  # Natural language terminal and SITREP generator
+        ├── GuardianPlanPage.tsx   # Flyer designer and community resources
+        └── TrustSafetyPage.tsx    # Incident protocols, TNR guides, safety bounds
 ```
 
 ---
 
-## 📌 Installation
+## 📌 Installation & Execution
 
-Follow these steps to set up the development environment on your local system:
+### 1. Clone the Codebase
+```bash
+git clone https://github.com/your-username/purrsignal.git
+cd purrsignal
+```
 
-1. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/your-username/purrsignal.git
-   cd purrsignal
-   ```
+### 2. Install Package Dependencies
+```bash
+npm install
+```
 
-2. **Install Project Dependencies**:
-   ```bash
-   npm install
-   ```
-
-3. **Configure Environment Variables**:
-   Create a `.env` file in the root directory and define the required keys (see the [Environment Variables](#environment-variables) section below).
-
-4. **Verify Type-Safety and Linter**:
-   ```bash
-   npm run lint
-   ```
-
----
-
-## 📌 Environment Variables
-
-Create a `.env` file in the root directory. Never commit secrets to your public source control.
-
+### 3. Establish Local Environment Variables
+Create a `.env` file in the root directory:
 ```env
-# Required: Google Gemini API Access Key
-# Acquire your personal key from Google AI Studio (https://aistudio.google.com)
+# Acquire your API key from Google AI Studio (https://aistudio.google.com)
 GEMINI_API_KEY="AIzaSyYourGeminiAPIKeyHere"
-
-# Optional: Public Application URL Host (For redirection/redistribution logs)
-APP_URL="http://localhost:3000"
 ```
 
----
-
-## 📌 Running the Project
-
-### Development Mode
-Runs the TypeScript server using `tsx` on port `3000` with the Vite asset-routing middleware:
+### 4. Run the Development Server
 ```bash
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3000](http://localhost:3000) on your local browser.
 
-### Production Build & Launch
-1. **Compile Static Assets and Bundle Server**:
-   ```bash
-   npm run build
-   ```
-   This command compiles the React assets into `dist/` and packages `server.ts` into a single, optimized, self-contained CommonJS file (`dist/server.cjs`) using `esbuild`.
+### 5. Build for Production Container Deployment
+```bash
+# Compiles React assets and bundles the Express server with esbuild
+npm run build
 
-2. **Execute the Server**:
-   ```bash
-   npm run start
-   ```
-
----
-
-## 📌 Application Workflow
-
-The complete operational lifecycle of a pet recovery follows this workflow:
-
-```
- 📥 1. REPORT ──► 📸 2. MULTIMODAL AI ANALYSIS ──► ⚖️ 3. CO-ORDINATOR VERIFY
-                                                              │
-                                                              ▼
- 🏁 6. REUNIFIED ◄── 🏥 5. FIELD RESCUE OPS ◄── 📋 4. MISSION CREATION
+# Runs the compiled bundle (dist/server.cjs)
+npm run start
 ```
 
-1. **Incident Registration (Report)**:
-   A community member uploads a photo and writes notes (e.g. *"Saw an orange cat hiding in my shed"*), marking coordinates on the map.
-2. **AI Forensics (Multimodal Analysis)**:
-   The backend proxies the image to Gemini. The model structures characteristic variables, calculates confidence values, evaluates immediate environmental urgency, and appends necessary veterinary safety disclaimers.
-3. **Human Inspection (Verification)**:
-   A Coordinator reviews the structured output on the Dashboard, verifies contact details, and validates the match compatibility score.
-4. **Operation Dispatch (Mission Creation)**:
-   The Coordinator schedules a rescue mission, registers necessary gear (e.g., Feral scent traps, wet bait, protective sheets), and assigns active on-call responders.
-5. **Field Logistics (Rescue Ops)**:
-   Field volunteers travel to the coordinates, set secure traps, log status reports via their tactical interfaces, and transport the feline to shelter resources.
-6. **Reunification (Closeout)**:
-   Owner matches are confirmed, microchip numbers are indexed, and handshakes are logged. The status is set to **REUNITED** and displayed on the public ticker.
+---
+
+## 📌 The Recovery Lifecycle
+
+```text
+[1. REPORT] ──────────────────► [2. FORENSICS] ───────────────► [3. VERIFY]
+A resident submits photo        Gemini inspects pattern,        Coordinator approves
+and registers coordinates       urgency, and tags hallmarks     compatibility match
+                                                                       │
+                                                                       ▼
+[6. REUNITED] 🐾 ◄────────────── [5. FIELD OPS] ◄────────────── [4. DISPATCH]
+Lost cat scan checks out,       Rescuers set scent traps,       Captain schedules
+handshakes logged to terminal   track sequential path trails    gear lists & volunteers
+```
 
 ---
 
-## 📌 Security & Privacy
+## 📌 Challenges & Technical Triumphs
 
-* **Server-Side Key Protection**: The application uses a strict server-to-server proxy architecture. The `GEMINI_API_KEY` is maintained entirely within backend memories and is never sent to the client browser.
-* **Personally Identifiable Information (PII) Isolation**: Public report contact details (names, phone numbers) are restricted to registered coordinators.
-* **Role-Based Workspaces**: Users select a profile persona at startup. Only certified Coordinators have clearance to trigger match approvals, dispatch missions, or sign off on AI copilot executions.
-* **Sensing Boundaries**: Sighting locations are geocoded to park boundaries or alley coordinates to shield specific resident properties from crowdsourced trespass.
-
----
-
-## 📌 Screenshots
-
-> **Note**: Placeholder paths are configured here. In a deployed environment, replace these with real PNG assets stored in your `/assets` or static directory.
-
-| Dashboard Screen | Crisis Tracking Map |
-| :---: | :---: |
-| ![Mission Control Dashboard](https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=500&q=80) | ![Feline Sighting Sequence Map](https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=500&q=80) |
-
----
-
-## 📌 Future Enhancements
-
-* **Real-time Live Chat Sockets**: Transition coordination terminals to active WebSockets to instantly stream volunteer locations.
-* **Microchip Scanner integrations**: Allow mobile volunteers to append Bluetooth-scanned RFID chip data directly to incident feeds.
-* **Weather Forecasting Hooks**: Connect with meteorological APIs to automatically raise incident threat levels if a trapped cat's coordinates overlap with expected freeze or heavy rain boundaries.
-
----
-
-## 📌 Performance Considerations
-
-* **Map Render Optimization**: Custom SVGs are fully reactive. Sighting dots, sequentially generated trails, and heatmaps are drawn within standard CPU margins, completely avoiding heavy Canvas re-initializations.
-* **Zero HMR Interference**: Development servers execute with hot module replacement disabled by the platform, guaranteeing reliable, flicker-free state changes.
-* **Bundled Server Package**: Using `esbuild` to compile our entire server into a unified `dist/server.cjs` reduces file I/O operations and speeds up cold-start times on virtual containers.
-
----
-
-## 📌 Challenges Faced
-
-1. **Structured JSON Validation**: Early prototypes suffered from occasional missing parameters when Gemini returned unstructured summaries. We solved this by implementing strict JSON Schemas mapped directly within the model config payload.
-2. **Visual Clutter on Density Overlaps**: When multiple sightings occurred at the exact same location, pins overlapped. We introduced spatial offset Jitters and sequential step trails to isolate individual sighting paths cleanly.
-3. **Map Pin Hover Instability**: During testing, hovering over pins caused them to vibrate due to scale transformations changing hover boundaries recursively. This was fixed by disabling aggressive hover scaling, maintaining stationary pin vectors, and using high-contrast outline borders for cursor feedback instead.
-
----
-
-## 📌 Learnings
-
-* **Multimodal Forensics is Transformational**: Using Gemini to extract characteristic coat patterns from blurry community photos proved significantly more accurate than relying on frantic text descriptions alone.
-* **Human-in-the-Loop is Mandatory**: AI should act as an accelerator, not an absolute commander. Requiring manual coordinator approvals for dispatches keeps community trust intact and guards against dispatching teams to false alarms.
-
----
-
-## 📌 Contributing
-
-PurrSignal is an open-source project created to safeguard our neighborhood companions. We welcome contributions from animal advocates and developers:
-
-1. Fork the Project.
-2. Create your Feature Branch (`git checkout -b feature/AmazingRescue`).
-3. Commit your Changes (`git commit -m 'Add support for live scent trap telemetry'`).
-4. Push to the Branch (`git push origin feature/AmazingRescue`).
-5. Open a Pull Request.
-
----
-
-## 📌 License
-
-Distributed under the **MIT License**. See `LICENSE` for more information.
-
----
-
-## 📌 Acknowledgements
-
-* **Google AI Studio** for equipping volunteers with cutting-edge Gemini Developer credits.
-* **Unsplash** for high-quality animal photography and visual assets.
-* **The open-source community** for the elegant Lucide React icon configurations.
+1. **Structured Object Formatting**:
+   * *Challenge*: Initial responses from raw prompts yielded loose, unstructured text blocks that caused JSON parsing crashes on the frontend.
+   * *Resolution*: We implemented strict JSON schemas using `responseMimeType: "application/json"` mapped to the `responseSchema` configuration options within the Gemini API configuration structure.
+2. **Stable Pin Interactivity**:
+   * *Challenge*: On-hover scale transformations triggered boundary shifts that caused target map pins to vibrate during mouseover events.
+   * *Resolution*: We decoupled spatial interaction layers from physics hover containers, replacing scaling with steady high-contrast outlining to allow precise clicking.
+3. **Privacy Compliance on Crowdsourcing**:
+   * *Challenge*: Logging precise home addresses endangered pet owners and risked public trespassing on private property during active searches.
+   * *Resolution*: Created precise geocoding offsets that align pin clusters with municipal greenbelts and public access alleys, keeping coordinate search grids secure.
 
 ---
 *Developed with love for cats everywhere. Keep signalling, keep saving.* 🐾
