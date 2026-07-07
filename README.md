@@ -1,8 +1,63 @@
+<div align="center">
+
 # 🐾 PurrSignal
 
-<img width="1671" height="941" alt="ChatGPT Image Jul 7, 2026, 01_13_04 PM" src="https://github.com/user-attachments/assets/7a90e2e4-8ef3-4b2c-8db3-2dcb58a6472a" />
+### AI Crisis Command Center for Cat Rescue, Tracing & Reunification
 
-### PurrSignal is a highly sophisticated, full-stack, AI-assisted crisis coordination platform designed specifically for cat rescue, tracing, and reunification. It bridges the gap between fragmented public community sighting data and active on-the-ground professional volunteer response. By transforming unorganized, chaotic incident reports into structured, prioritizable operational dispatches, PurrSignal ensures that trapped, lost, or injured cats are rescued swiftly and safely.
+
+
+<br/>
+
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Gemini](https://img.shields.io/badge/Google_Gemini-AI-8E75B2?logo=googlegemini&logoColor=white)](https://ai.google.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Node.js](https://img.shields.io/badge/Node.js-Express-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](#-license)
+
+### **Report → Analyze → Verify → Dispatch → Rescue → Reunite**
+
+*Turning fragmented sightings into coordinated rescue missions.*
+
+<img width="100%" alt="ChatGPT Image Jul 7, 2026, 01_13_04 PM" src="https://github.com/user-attachments/assets/7a90e2e4-8ef3-4b2c-8db3-2dcb58a6472a" />
+
+</div>
+
+> ### PurrSignal is a highly sophisticated, full-stack, AI-assisted crisis coordination platform designed specifically for cat rescue, tracing, and reunification. It bridges the gap between fragmented public community sighting data and active on-the-ground professional volunteer response. By transforming unorganized, chaotic incident reports into structured, prioritizable operational dispatches, PurrSignal ensures that trapped, lost, or injured cats are rescued swiftly and safely.
+
+---
+
+## 🧭 Table of Contents
+
+- [Problem Statement](#-problem-statement)
+- [Solution](#-solution)
+- [Key Features](#-key-features)
+- [AI Capabilities](#-ai-capabilities)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Installation](#-installation)
+- [Environment Variables](#-environment-variables)
+- [Running the Project](#-running-the-project)
+- [Application Workflow](#-application-workflow)
+- [Security & Privacy](#-security--privacy)
+- [Screenshots](#-screenshots)
+- [Future Enhancements](#-future-enhancements)
+- [Performance Considerations](#-performance-considerations)
+- [Challenges Faced](#-challenges-faced)
+- [Learnings](#-learnings)
+- [Contributing](#-contributing)
+- [License](#-license)
+- [Acknowledgements](#-acknowledgements)
+
+---
+
+<div align="center">
+
+| 🌍 Community Reports | 🧠 Gemini AI | 🎯 Rescue Coordination |
+|:---:|:---:|:---:|
+| Multimodal public sightings and incident reports | Structured analysis, urgency assessment, matching support | Verification, dispatch, volunteer assignment, and reunification |
+
+</div>
 
 ---
 
@@ -19,6 +74,8 @@ In times of natural disasters, localized accidents, or simple neighborhood escap
 
 ## 📌 Solution
 
+> **One coordinated operational loop connecting the public, AI-assisted analysis, and on-the-ground rescue teams.**
+
 PurrSignal solves this coordination problem through a resilient, real-time command portal structured around three main agents:
 * **The Community (The Public)**: Seamlessly logs incidents or sightings through responsive, geolocated forms supporting multimodal (photo + text) inputs.
 * **The AI Core (Gemini 3.5 Flash)**: Acts as an instant visual forensic examiner, structuring coat characteristics, evaluating threat levels, extracting distinctive hallmarks, and highlighting medical boundaries safely.
@@ -27,6 +84,13 @@ PurrSignal solves this coordination problem through a resilient, real-time comma
 ---
 
 ## 📌 Key Features
+
+<div align="center">
+
+**A complete rescue operations experience — from first signal to safe reunion.**
+
+</div>
+
 
 ### 1. Interactive Landing Page & Miso Story Simulator
 * **Live Operational Ticker**: Displays up-to-the-minute platform-wide performance indices, including **Active Missions**, **Successful Reunions**, **Mobilized Rescuers**, and **Telemetry Signal Reliability**.
@@ -55,6 +119,9 @@ PurrSignal solves this coordination problem through a resilient, real-time comma
 ---
 
 ## 📌 AI Capabilities
+
+> [!IMPORTANT]
+> PurrSignal uses AI as an operational accelerator—not an autonomous decision-maker. Human verification remains central to matching, dispatch, and rescue decisions.
 
 PurrSignal leverages the state-of-the-art `@google/genai` TypeScript SDK on the server side to power its intelligent analysis.
 
@@ -96,6 +163,13 @@ As a responsible AI assistant, PurrSignal enforces rigid veterinary and visual b
 ---
 
 ## 📌 Tech Stack
+
+<div align="center">
+
+**Modern full-stack TypeScript architecture with server-side Gemini integration**
+
+</div>
+
 
 | Layer | Technology | Purpose |
 | :--- | :--- | :--- |
@@ -140,6 +214,19 @@ As a responsible AI assistant, PurrSignal enforces rigid veterinary and visual b
         ├── GuardianPlanPage.tsx   # Emergency preparedness builder & printable pet flyers
         └── TrustSafetyPage.tsx    # Safety compliance resources and search protocols
 ```
+
+---
+
+## ⚡ Quick Start
+
+```bash
+git clone https://github.com/Jidnyasa-P/PurrSignal-An-AI-Crisis-Command-Center-for-Cats.git
+cd PurrSignal-An-AI-Crisis-Command-Center-for-Cats
+npm install
+npm run dev
+```
+
+> Add your `GEMINI_API_KEY` to a local `.env` file before using Gemini-powered analysis features.
 
 ---
 
@@ -208,14 +295,16 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## 📌 Application Workflow
 
+<div align="center">
+
+### 📥 Report → 📸 AI Analysis → ⚖️ Verify → 📋 Mission → 🏥 Rescue → 🏁 Reunite
+
+</div>
+
 The complete operational lifecycle of a pet recovery follows this workflow:
 
-```
- 📥 1. REPORT ──► 📸 2. MULTIMODAL AI ANALYSIS ──► ⚖️ 3. CO-ORDINATOR VERIFY
-                                                              │
-                                                              ▼
- 🏁 6. REUNIFIED ◄── 🏥 5. FIELD RESCUE OPS ◄── 📋 4. MISSION CREATION
-```
+<img width="1682" height="367" alt="Screenshot 2026-07-07 135103" src="https://github.com/user-attachments/assets/da4bbcd6-36ce-4e5d-90ae-4b138ea875cb" />
+
 
 1. **Incident Registration (Report)**:
    A community member uploads a photo and writes notes (e.g. *"Saw an orange cat hiding in my shed"*), marking coordinates on the map.
@@ -234,6 +323,10 @@ The complete operational lifecycle of a pet recovery follows this workflow:
 
 ## 📌 Security & Privacy
 
+> [!NOTE]
+> PurrSignal is designed around privacy-aware location handling, server-side API key protection, role-aware operations, and human verification for sensitive AI-assisted actions.
+
+
 * **Server-Side Key Protection**: The application uses a strict server-to-server proxy architecture. The `GEMINI_API_KEY` is maintained entirely within backend memories and is never sent to the client browser.
 * **Personally Identifiable Information (PII) Isolation**: Public report contact details (names, phone numbers) are restricted to registered coordinators.
 * **Role-Based Workspaces**: Users select a profile persona at startup. Only certified Coordinators have clearance to trigger match approvals, dispatch missions, or sign off on AI copilot executions.
@@ -243,11 +336,31 @@ The complete operational lifecycle of a pet recovery follows this workflow:
 
 ## 📌 Screenshots
 
-> **Note**: Placeholder paths are configured here. In a deployed environment, replace these with real PNG assets stored in your `/assets` or static directory.
+<div align="center">
 
-| Dashboard Screen | Crisis Tracking Map |
-| :---: | :---: |
-| ![Mission Control Dashboard](https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=500&q=80) | ![Feline Sighting Sequence Map](https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=500&q=80) |
+**Operational interfaces for mission coordination and spatial-temporal sighting intelligence**
+
+</div>
+
+### **Dashboard Screen**
+
+<img width="1754" height="889" alt="Screenshot 2026-07-07 134637" src="https://github.com/user-attachments/assets/127850ee-36c4-477e-b8d5-e0b297ad5847" />
+
+<img width="1909" height="866" alt="Screenshot 2026-07-07 134251" src="https://github.com/user-attachments/assets/a62e8c63-e8dd-4f64-a217-90b851d3b1c5" />
+
+### **Crisis Tracking Map**
+
+<img width="1911" height="864" alt="Screenshot 2026-07-07 134223" src="https://github.com/user-attachments/assets/7a37d932-f102-4228-98ed-64ee99a65ed4" />
+<img width="1854" height="760" alt="Screenshot 2026-07-07 134601" src="https://github.com/user-attachments/assets/a43ed157-f509-41de-b535-16409b2175d5" />
+
+### **AI Chat Support**
+
+<img width="1910" height="871" alt="Screenshot 2026-07-07 134609" src="https://github.com/user-attachments/assets/64ff8b56-5a9e-4a42-92b3-2046a7a20a26" />
+
+### **Emergency panel**
+
+<img width="1890" height="877" alt="Screenshot 2026-07-07 134616" src="https://github.com/user-attachments/assets/3265bf51-e3f3-45a3-9980-35e555e8dd9b" />
+
 
 ---
 
@@ -307,4 +420,13 @@ Distributed under the **MIT License**. See `LICENSE` for more information.
 * **The open-source community** for the elegant Lucide React icon configurations.
 
 ---
+<div align="center">
+
+---
+
+### 🐾 Report. Connect. Rescue. Reunite.
+
 *Developed with love for cats everywhere. Keep signalling, keep saving.* 🐾
+
+</div>
+
