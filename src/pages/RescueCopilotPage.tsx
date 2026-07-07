@@ -402,144 +402,144 @@ ${uncertainties.map(u => `* ${u}`).join('\n')}`;
   };
 
   return (
-    <div id="copilot-terminal-container" className="h-[calc(100vh-64px)] flex flex-col md:flex-row overflow-hidden bg-slate-950 text-white font-mono">
+    <div id="copilot-terminal-container" className="h-[calc(100vh-64px)] flex flex-col md:flex-row overflow-hidden bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-mono">
       
       {/* LEFT TEMPLATE WIDGET PANELS (4 cols) */}
-      <div className="w-full md:w-80 lg:w-96 bg-slate-900 border-r border-slate-800 p-4 flex flex-col justify-between h-1/3 md:h-full overflow-y-auto">
+      <div className="w-full md:w-80 lg:w-96 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-4 flex flex-col justify-between h-1/3 md:h-full overflow-y-auto">
         
         <div className="space-y-4">
-          <div className="border-b border-slate-800 pb-3">
-            <h3 className="text-xs font-extrabold tracking-wider text-amber-500 uppercase flex items-center gap-1.5">
+          <div className="border-b border-slate-200 dark:border-slate-800 pb-3">
+            <h3 className="text-xs font-extrabold tracking-wider text-amber-600 dark:text-amber-500 uppercase flex items-center gap-1.5">
               <Terminal className="w-4 h-4" />
               Tactical Actions
             </h3>
-            <p className="text-[10px] text-slate-500 mt-1">Direct query integrations linked with live PurrSignal data.</p>
+            <p className="text-[10px] text-slate-450 dark:text-slate-500 mt-1">Direct query integrations linked with live PurrSignal data.</p>
           </div>
 
-          <div className="space-y-2.5">
+          <div className="space-y-2.5 text-left">
             {/* Quick Action 1 */}
             <button
               id="qa-summarize-critical"
               onClick={() => handleSendMessage("Summarize critical incidents")}
-              className="w-full p-3 bg-slate-950/85 hover:bg-slate-800/60 border border-slate-800 rounded-xl text-left transition-colors flex items-start gap-2.5 group"
+              className="w-full p-3 bg-slate-50 hover:bg-slate-100 dark:bg-slate-950/85 dark:hover:bg-slate-800/60 border border-slate-200 dark:border-slate-800 rounded-xl text-left transition-colors flex items-start gap-2.5 group"
             >
-              <div className="p-1.5 bg-slate-900 border border-slate-800 text-rose-500 rounded group-hover:bg-slate-850">
+              <div className="p-1.5 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-rose-500 rounded group-hover:bg-slate-200 dark:group-hover:bg-slate-850">
                 <ShieldAlert className="w-3.5 h-3.5" />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-[11px] font-bold text-slate-200 group-hover:text-rose-400">Summarize Critical Incidents</div>
-                <div className="text-[9px] text-slate-500 mt-0.5 truncate">Filters high urgency sighting logs</div>
+                <div className="text-[11px] font-bold text-slate-700 dark:text-slate-200 group-hover:text-rose-600 dark:group-hover:text-rose-400">Summarize Critical Incidents</div>
+                <div className="text-[9px] text-slate-450 dark:text-slate-500 mt-0.5 truncate">Filters high urgency sighting logs</div>
               </div>
-              <ArrowRight className="w-3 h-3 text-slate-600 mt-1 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
+              <ArrowRight className="w-3 h-3 text-slate-400 dark:text-slate-600 mt-1 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
             </button>
 
             {/* Quick Action 2 */}
             <button
               id="qa-unassigned-missions"
               onClick={() => handleSendMessage("Find unassigned missions")}
-              className="w-full p-3 bg-slate-950/85 hover:bg-slate-800/60 border border-slate-800 rounded-xl text-left transition-colors flex items-start gap-2.5 group"
+              className="w-full p-3 bg-slate-50 hover:bg-slate-100 dark:bg-slate-950/85 dark:hover:bg-slate-800/60 border border-slate-200 dark:border-slate-800 rounded-xl text-left transition-colors flex items-start gap-2.5 group"
             >
-              <div className="p-1.5 bg-slate-900 border border-slate-800 text-amber-500 rounded group-hover:bg-slate-850">
+              <div className="p-1.5 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-amber-500 rounded group-hover:bg-slate-200 dark:group-hover:bg-slate-850">
                 <Wrench className="w-3.5 h-3.5" />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-[11px] font-bold text-slate-200 group-hover:text-amber-400">Unassigned Missions</div>
-                <div className="text-[9px] text-slate-500 mt-0.5 truncate">List operations waiting for rescuers</div>
+                <div className="text-[11px] font-bold text-slate-700 dark:text-slate-200 group-hover:text-amber-600 dark:group-hover:text-amber-400">Unassigned Missions</div>
+                <div className="text-[9px] text-slate-450 dark:text-slate-500 mt-0.5 truncate">List operations waiting for rescuers</div>
               </div>
-              <ArrowRight className="w-3 h-3 text-slate-600 mt-1 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
+              <ArrowRight className="w-3 h-3 text-slate-400 dark:text-slate-600 mt-1 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
             </button>
 
             {/* Quick Action 3 */}
             <button
               id="qa-explain-matches"
               onClick={() => handleSendMessage("Explain possible cat matches")}
-              className="w-full p-3 bg-slate-950/85 hover:bg-slate-800/60 border border-slate-800 rounded-xl text-left transition-colors flex items-start gap-2.5 group"
+              className="w-full p-3 bg-slate-50 hover:bg-slate-100 dark:bg-slate-950/85 dark:hover:bg-slate-800/60 border border-slate-200 dark:border-slate-800 rounded-xl text-left transition-colors flex items-start gap-2.5 group"
             >
-              <div className="p-1.5 bg-slate-900 border border-slate-800 text-purple-400 rounded group-hover:bg-slate-850">
+              <div className="p-1.5 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-purple-600 dark:text-purple-400 rounded group-hover:bg-slate-200 dark:group-hover:bg-slate-850">
                 <Compass className="w-3.5 h-3.5" />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-[11px] font-bold text-slate-200 group-hover:text-purple-400">Explain Sighting Matches</div>
-                <div className="text-[9px] text-slate-500 mt-0.5 truncate">Compares characteristics and scores</div>
+                <div className="text-[11px] font-bold text-slate-700 dark:text-slate-200 group-hover:text-purple-600 dark:group-hover:text-purple-400">Explain Sighting Matches</div>
+                <div className="text-[9px] text-slate-450 dark:text-slate-500 mt-0.5 truncate">Compares characteristics and scores</div>
               </div>
-              <ArrowRight className="w-3 h-3 text-slate-600 mt-1 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
+              <ArrowRight className="w-3 h-3 text-slate-400 dark:text-slate-600 mt-1 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
             </button>
 
             {/* Quick Action 4 */}
             <button
               id="qa-brief-miso"
               onClick={() => handleSendMessage("Brief me on mission PS-M104")}
-              className="w-full p-3 bg-slate-950/85 hover:bg-slate-800/60 border border-slate-800 rounded-xl text-left transition-colors flex items-start gap-2.5 group"
+              className="w-full p-3 bg-slate-50 hover:bg-slate-100 dark:bg-slate-950/85 dark:hover:bg-slate-800/60 border border-slate-200 dark:border-slate-800 rounded-xl text-left transition-colors flex items-start gap-2.5 group"
             >
-              <div className="p-1.5 bg-slate-900 border border-slate-800 text-blue-400 rounded group-hover:bg-slate-850">
+              <div className="p-1.5 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-blue-500 dark:text-blue-400 rounded group-hover:bg-slate-200 dark:group-hover:bg-slate-850">
                 <Cat className="w-3.5 h-3.5" />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-[11px] font-bold text-slate-200 group-hover:text-blue-400">Briefing: Mission Miso</div>
-                <div className="text-[9px] text-slate-500 mt-0.5 truncate">Dynamic briefing for case PS-M104</div>
+                <div className="text-[11px] font-bold text-slate-700 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">Briefing: Mission Miso</div>
+                <div className="text-[9px] text-slate-450 dark:text-slate-500 mt-0.5 truncate">Dynamic briefing for case PS-M104</div>
               </div>
-              <ArrowRight className="w-3 h-3 text-slate-600 mt-1 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
+              <ArrowRight className="w-3 h-3 text-slate-400 dark:text-slate-600 mt-1 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
             </button>
 
             {/* Quick Action 5 */}
             <button
               id="qa-changed-today"
               onClick={() => handleSendMessage("Summarize what changed today")}
-              className="w-full p-3 bg-slate-950/85 hover:bg-slate-800/60 border border-slate-800 rounded-xl text-left transition-colors flex items-start gap-2.5 group"
+              className="w-full p-3 bg-slate-50 hover:bg-slate-100 dark:bg-slate-950/85 dark:hover:bg-slate-800/60 border border-slate-200 dark:border-slate-800 rounded-xl text-left transition-colors flex items-start gap-2.5 group"
             >
-              <div className="p-1.5 bg-slate-900 border border-slate-800 text-indigo-400 rounded group-hover:bg-slate-850">
+              <div className="p-1.5 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-indigo-500 dark:text-indigo-400 rounded group-hover:bg-slate-200 dark:group-hover:bg-slate-850">
                 <Activity className="w-3.5 h-3.5" />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-[11px] font-bold text-slate-200 group-hover:text-indigo-400">What Changed Today</div>
-                <div className="text-[9px] text-slate-500 mt-0.5 truncate">Transition metrics and logs</div>
+                <div className="text-[11px] font-bold text-slate-700 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">What Changed Today</div>
+                <div className="text-[9px] text-slate-450 dark:text-slate-500 mt-0.5 truncate">Transition metrics and logs</div>
               </div>
-              <ArrowRight className="w-3 h-3 text-slate-600 mt-1 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
+              <ArrowRight className="w-3 h-3 text-slate-400 dark:text-slate-600 mt-1 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
             </button>
 
             {/* Quick Action 6 */}
             <button
               id="qa-verify-needed"
               onClick={() => handleSendMessage("Identify incidents waiting for verification")}
-              className="w-full p-3 bg-slate-950/85 hover:bg-slate-800/60 border border-slate-800 rounded-xl text-left transition-colors flex items-start gap-2.5 group"
+              className="w-full p-3 bg-slate-50 hover:bg-slate-100 dark:bg-slate-950/85 dark:hover:bg-slate-800/60 border border-slate-200 dark:border-slate-800 rounded-xl text-left transition-colors flex items-start gap-2.5 group"
             >
-              <div className="p-1.5 bg-slate-900 border border-slate-800 text-teal-400 rounded group-hover:bg-slate-850">
+              <div className="p-1.5 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-teal-600 dark:text-teal-400 rounded group-hover:bg-slate-200 dark:group-hover:bg-slate-850">
                 <Clock className="w-3.5 h-3.5" />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-[11px] font-bold text-slate-200 group-hover:text-teal-400">Verify Pending Reports</div>
-                <div className="text-[9px] text-slate-500 mt-0.5 truncate">Lists unconfirmed public entries</div>
+                <div className="text-[11px] font-bold text-slate-700 dark:text-slate-200 group-hover:text-teal-600 dark:group-hover:text-teal-400">Verify Pending Reports</div>
+                <div className="text-[9px] text-slate-450 dark:text-slate-500 mt-0.5 truncate">Lists unconfirmed public entries</div>
               </div>
-              <ArrowRight className="w-3 h-3 text-slate-600 mt-1 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
+              <ArrowRight className="w-3 h-3 text-slate-400 dark:text-slate-600 mt-1 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
             </button>
 
             {/* Quick Action 7 */}
             <button
               id="qa-handoff"
               onClick={() => handleSendMessage("Create a handoff summary for the next coordinator")}
-              className="w-full p-3 bg-slate-950/85 hover:bg-slate-800/60 border border-slate-800 rounded-xl text-left transition-colors flex items-start gap-2.5 group"
+              className="w-full p-3 bg-slate-50 hover:bg-slate-100 dark:bg-slate-950/85 dark:hover:bg-slate-800/60 border border-slate-200 dark:border-slate-800 rounded-xl text-left transition-colors flex items-start gap-2.5 group"
             >
-              <div className="p-1.5 bg-slate-900 border border-slate-800 text-emerald-400 rounded group-hover:bg-slate-850">
+              <div className="p-1.5 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-emerald-600 dark:text-emerald-400 rounded group-hover:bg-slate-200 dark:group-hover:bg-slate-850">
                 <UserCheck className="w-3.5 h-3.5" />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-[11px] font-bold text-slate-200 group-hover:text-emerald-400">Coordinator Handoff Brief</div>
-                <div className="text-[9px] text-slate-500 mt-0.5 truncate">Compiles shift handoff SITREPs</div>
+                <div className="text-[11px] font-bold text-slate-700 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">Coordinator Handoff Brief</div>
+                <div className="text-[9px] text-slate-450 dark:text-slate-500 mt-0.5 truncate">Compiles shift handoff SITREPs</div>
               </div>
-              <ArrowRight className="w-3 h-3 text-slate-600 mt-1 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
+              <ArrowRight className="w-3 h-3 text-slate-400 dark:text-slate-600 mt-1 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
             </button>
           </div>
         </div>
 
         {/* Tool logs console */}
-        <div className="mt-4 pt-4 border-t border-slate-800 flex flex-col min-h-[120px] max-h-48 overflow-hidden">
-          <div className="flex items-center justify-between text-[10px] text-slate-500 mb-1.5 uppercase font-bold font-mono">
+        <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-800 flex flex-col min-h-[120px] max-h-48 overflow-hidden">
+          <div className="flex items-center justify-between text-[10px] text-slate-450 dark:text-slate-500 mb-1.5 uppercase font-bold font-mono">
             <span>Agent Tool Call Logs:</span>
             <Database className="w-3 h-3" />
           </div>
-          <div className="flex-1 bg-slate-950 border border-slate-800/80 rounded-lg p-2 font-mono text-[9px] text-slate-400 overflow-y-auto space-y-1">
+          <div className="flex-1 bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 rounded-lg p-2 font-mono text-[9px] text-slate-600 dark:text-slate-400 overflow-y-auto space-y-1 text-left">
             {toolLogs.length === 0 ? (
-              <span className="text-slate-600 italic">No tools evaluated yet.</span>
+              <span className="text-slate-400 dark:text-slate-600 italic">No tools evaluated yet.</span>
             ) : (
               toolLogs.map((log, idx) => <div key={idx} className="leading-tight">{log}</div>)
             )}
@@ -550,7 +550,7 @@ ${uncertainties.map(u => `* ${u}`).join('\n')}`;
           <button
             id="copilot-btn-clear"
             onClick={clearChat}
-            className="w-full py-2 bg-slate-950 hover:bg-red-950/30 text-slate-500 hover:text-red-400 border border-slate-800 hover:border-red-900/50 rounded-lg text-[10px] uppercase font-bold transition-all flex items-center justify-center gap-1.5"
+            className="w-full py-2 bg-slate-100 hover:bg-red-50 dark:bg-slate-950 dark:hover:bg-red-950/30 text-slate-500 hover:text-red-600 dark:hover:text-red-400 border border-slate-200 dark:border-slate-800 hover:border-red-300 dark:hover:border-red-900/50 rounded-lg text-[10px] uppercase font-bold transition-all flex items-center justify-center gap-1.5"
           >
             <Trash2 className="w-3.5 h-3.5" />
             Clear Terminal Logs
@@ -560,15 +560,15 @@ ${uncertainties.map(u => `* ${u}`).join('\n')}`;
       </div>
 
       {/* CHAT CONSOLE STAGE (8 cols) */}
-      <div className="flex-1 flex flex-col justify-between bg-slate-950 h-2/3 md:h-full">
+      <div className="flex-1 flex flex-col justify-between bg-slate-50 dark:bg-slate-950 h-2/3 md:h-full text-left">
         
         {/* Terminal Header */}
-        <div className="p-4 border-b border-slate-900 bg-slate-950/80 backdrop-blur flex items-center justify-between">
+        <div className="p-4 border-b border-slate-200 dark:border-slate-900 bg-white dark:bg-slate-950/80 backdrop-blur flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse" />
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-100">PurrSignal AI Copilot Station v2.5</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-100">PurrSignal AI Copilot Station v2.5</span>
           </div>
-          <span className="text-[10px] text-amber-500 font-mono">DATABASE SAT-LINK ROOTED</span>
+          <span className="text-[10px] text-amber-600 dark:text-amber-500 font-mono">DATABASE SAT-LINK ROOTED</span>
         </div>
 
         {/* Messages Stream */}
@@ -585,22 +585,22 @@ ${uncertainties.map(u => `* ${u}`).join('\n')}`;
                 {/* Avatar */}
                 <div className={`w-8 h-8 rounded-full border flex items-center justify-center flex-shrink-0 ${
                   isUser 
-                    ? 'bg-slate-900 border-slate-800 text-amber-400' 
-                    : 'bg-amber-500/10 border-amber-500/20 text-amber-400 shadow-lg shadow-amber-500/5'
+                    ? 'bg-slate-250 dark:bg-slate-900 border-slate-300 dark:border-slate-800 text-amber-600 dark:text-amber-400' 
+                    : 'bg-amber-500/10 border-amber-500/20 text-amber-600 dark:text-amber-400 shadow-lg shadow-amber-500/5'
                 }`}>
                   {isUser ? <User className="w-4 h-4" /> : <Sparkles className="w-4 h-4 animate-pulse" />}
                 </div>
 
                 {/* Message Body */}
-                <div className="space-y-1.5">
+                <div className="space-y-1.5 text-left">
                   <div className={`p-4 rounded-2xl border text-xs leading-relaxed whitespace-pre-wrap ${
                     isUser 
-                      ? 'bg-slate-900 border-slate-800/80 text-slate-100' 
-                      : 'bg-slate-900/60 border-slate-800/40 text-slate-300 shadow-sm shadow-slate-950/20'
+                      ? 'bg-white dark:bg-slate-900 border-slate-250 dark:border-slate-800/80 text-slate-800 dark:text-slate-100' 
+                      : 'bg-slate-100/60 dark:bg-slate-900/60 border-slate-200 dark:border-slate-800/40 text-slate-700 dark:text-slate-300 shadow-sm shadow-slate-950/20'
                   }`}>
                     {/* Tool Call Tag */}
                     {!isUser && m.toolInvocations && m.toolInvocations.map((tool, tIdx) => (
-                      <div key={tIdx} className="mb-2 inline-flex items-center gap-1 px-2 py-0.5 bg-slate-950 border border-slate-800 text-[8px] font-bold text-amber-400 rounded font-mono uppercase">
+                      <div key={tIdx} className="mb-2 inline-flex items-center gap-1 px-2 py-0.5 bg-slate-200 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-[8px] font-bold text-amber-600 dark:text-amber-400 rounded font-mono uppercase font-black">
                         <Terminal className="w-2.5 h-2.5" />
                         Tool Invoked: {tool}
                       </div>
@@ -624,7 +624,7 @@ ${uncertainties.map(u => `* ${u}`).join('\n')}`;
                             };
                             handleSendMessage(prompts[s.actionCode] || s.label);
                           }}
-                          className="px-3 py-1 bg-slate-900 hover:bg-amber-500/10 border border-slate-800 hover:border-amber-500/30 text-[10px] rounded-lg text-slate-400 hover:text-amber-400 transition-colors cursor-pointer"
+                          className="px-3 py-1 bg-white dark:bg-slate-900 hover:bg-amber-500/10 border border-slate-200 dark:border-slate-800 hover:border-amber-500/30 text-[10px] rounded-lg text-slate-600 dark:text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 transition-colors cursor-pointer font-bold"
                         >
                           {s.label}
                         </button>
@@ -640,10 +640,10 @@ ${uncertainties.map(u => `* ${u}`).join('\n')}`;
           {/* Typing indicator */}
           {isTyping && (
             <div className="flex gap-3 max-w-md mr-auto">
-              <div className="w-8 h-8 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center flex-shrink-0 animate-pulse">
+              <div className="w-8 h-8 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center flex-shrink-0 animate-pulse">
                 <Sparkles className="w-4 h-4" />
               </div>
-              <div className="bg-slate-900/40 border border-slate-800/40 p-4 rounded-2xl text-xs text-slate-500 flex items-center gap-2">
+              <div className="bg-slate-100/60 dark:bg-slate-900/40 border border-slate-250 dark:border-slate-800/40 p-4 rounded-2xl text-xs text-slate-500 flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-bounce" style={{ animationDelay: '0ms' }} />
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-bounce" style={{ animationDelay: '150ms' }} />
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-bounce" style={{ animationDelay: '300ms' }} />
@@ -657,21 +657,21 @@ ${uncertainties.map(u => `* ${u}`).join('\n')}`;
             <motion.div 
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="p-5 bg-slate-900 border-2 border-amber-500 rounded-2xl max-w-lg mx-auto shadow-xl space-y-4 my-4 font-sans"
+              className="p-5 bg-white dark:bg-slate-900 border-2 border-amber-500 rounded-2xl max-w-lg mx-auto shadow-xl space-y-4 my-4 font-sans text-left"
             >
-              <div className="flex items-center gap-2 text-amber-500">
+              <div className="flex items-center gap-2 text-amber-600 dark:text-amber-500">
                 <AlertTriangle className="w-5 h-5 animate-pulse" />
                 <h4 className="text-sm font-extrabold uppercase font-mono tracking-wider">AI Modification Confirmation Needed</h4>
               </div>
               
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-slate-650 dark:text-slate-300 leading-relaxed">
                 You have requested a state-changing tactical action. Under human-in-the-loop protocols, the AI Copilot must seek manual authorization from a Coordinator before modifying any live dispatch records.
               </p>
 
-              <div className="p-3 bg-slate-950 border border-slate-800 rounded-xl font-mono text-[11px] text-slate-400 space-y-1">
-                <div><span className="text-amber-500">Action:</span> {pendingAction.type.toUpperCase()}</div>
-                <div><span className="text-amber-500">Target:</span> {pendingAction.targetId}</div>
-                <div><span className="text-amber-500">Description:</span> {pendingAction.description}</div>
+              <div className="p-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl font-mono text-[11px] text-slate-500 dark:text-slate-400 space-y-1 text-left">
+                <div><span className="text-amber-600 dark:text-amber-500">Action:</span> {pendingAction.type.toUpperCase()}</div>
+                <div><span className="text-amber-600 dark:text-amber-500">Target:</span> {pendingAction.targetId}</div>
+                <div><span className="text-amber-600 dark:text-amber-500">Description:</span> {pendingAction.description}</div>
               </div>
 
               <div className="flex gap-3 pt-2">
@@ -685,7 +685,7 @@ ${uncertainties.map(u => `* ${u}`).join('\n')}`;
                 <button
                   id="copilot-cancel-execute"
                   onClick={() => setPendingAction(null)}
-                  className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded-xl transition-colors"
+                  className="px-4 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs rounded-xl transition-colors"
                 >
                   Decline
                 </button>
@@ -702,7 +702,7 @@ ${uncertainties.map(u => `* ${u}`).join('\n')}`;
             e.preventDefault();
             handleSendMessage(inputText);
           }}
-          className="p-4 border-t border-slate-900 bg-slate-950/80 backdrop-blur"
+          className="p-4 border-t border-slate-200 dark:border-slate-900 bg-white dark:bg-slate-950/80 backdrop-blur font-mono"
         >
           <div className="flex gap-2">
             <input
@@ -712,7 +712,7 @@ ${uncertainties.map(u => `* ${u}`).join('\n')}`;
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               placeholder="Query: 'brief me on mission PS-M104', 'summarize critical', 'handoff briefing'..."
-              className="flex-1 px-4 py-3 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 font-mono"
+              className="flex-1 px-4 py-3 bg-white dark:bg-slate-900 border border-slate-250 dark:border-slate-800 rounded-xl text-xs text-slate-800 dark:text-slate-200 placeholder-slate-450 dark:placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 font-mono"
             />
             
             <button

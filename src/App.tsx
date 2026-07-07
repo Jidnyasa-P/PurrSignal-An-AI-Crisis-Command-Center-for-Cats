@@ -334,7 +334,7 @@ export default function App() {
             {/* LOGO */}
             <div 
               onClick={() => setActivePage('landing')}
-              className="cursor-pointer"
+              className="cursor-pointer flex-shrink-0"
             >
               <Logo />
             </div>
@@ -440,18 +440,18 @@ export default function App() {
 
         {/* MOBILE DROPDOWN DRAWER */}
         {mobileMenuOpen && (
-          <div id="nav-mobile-drawer" className="md:hidden border-t border-slate-100 dark:border-slate-900 bg-white dark:bg-slate-950 p-4 space-y-2 font-semibold">
+          <div id="nav-mobile-drawer" className="md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-4 space-y-2 font-semibold text-slate-600 dark:text-slate-300">
             <button
               id="mob-link-landing"
               onClick={() => { setActivePage('landing'); setMobileMenuOpen(false); }}
-              className="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 block"
+              className={`w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 block transition-colors ${activePage === 'landing' ? 'bg-slate-100 dark:bg-slate-900 text-slate-950 dark:text-white' : 'text-slate-700 dark:text-slate-300'}`}
             >
               Home
             </button>
             <button
               id="mob-link-map"
               onClick={() => { setActivePage('map'); setMobileMenuOpen(false); }}
-              className="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 flex items-center gap-2"
+              className={`w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 flex items-center gap-2 transition-colors ${activePage === 'map' ? 'bg-slate-100 dark:bg-slate-900 text-slate-950 dark:text-white' : 'text-slate-700 dark:text-slate-300'}`}
             >
               <Compass className="w-4 h-4 text-sky-500" />
               Sighting Map
@@ -459,7 +459,7 @@ export default function App() {
             <button
               id="mob-link-dashboard"
               onClick={() => { setActivePage('dashboard'); setMobileMenuOpen(false); }}
-              className="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 flex items-center gap-2"
+              className={`w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 flex items-center gap-2 transition-colors ${activePage === 'dashboard' ? 'bg-slate-100 dark:bg-slate-900 text-slate-950 dark:text-white' : 'text-slate-700 dark:text-slate-300'}`}
             >
               <Activity className="w-4 h-4 text-amber-500" />
               Mission Control
@@ -467,7 +467,7 @@ export default function App() {
             <button
               id="mob-link-copilot"
               onClick={() => { setActivePage('copilot'); setMobileMenuOpen(false); }}
-              className="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 flex items-center gap-2"
+              className={`w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 flex items-center gap-2 transition-colors ${activePage === 'copilot' ? 'bg-slate-100 dark:bg-slate-900 text-slate-950 dark:text-white' : 'text-slate-700 dark:text-slate-300'}`}
             >
               <Sparkles className="w-4 h-4 text-purple-500" />
               AI Copilot
@@ -475,7 +475,7 @@ export default function App() {
             <button
               id="mob-link-guardian"
               onClick={() => { setActivePage('guardian'); setMobileMenuOpen(false); }}
-              className="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 flex items-center gap-2"
+              className={`w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 flex items-center gap-2 transition-colors ${activePage === 'guardian' ? 'bg-slate-100 dark:bg-slate-900 text-slate-950 dark:text-white' : 'text-slate-700 dark:text-slate-300'}`}
             >
               <Heart className="w-4 h-4 text-rose-500" />
               Guardian Plan
@@ -483,7 +483,7 @@ export default function App() {
             <button
               id="mob-link-safety"
               onClick={() => { setActivePage('safety'); setMobileMenuOpen(false); }}
-              className="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 flex items-center gap-2"
+              className={`w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 flex items-center gap-2 transition-colors ${activePage === 'safety' ? 'bg-slate-100 dark:bg-slate-900 text-slate-950 dark:text-white' : 'text-slate-700 dark:text-slate-300'}`}
             >
               <Shield className="w-4 h-4 text-emerald-500" />
               Trust & Safety
@@ -491,7 +491,7 @@ export default function App() {
             <button
               id="mob-link-report"
               onClick={() => { setActivePage('report'); setMobileMenuOpen(false); }}
-              className="w-full text-left px-3 py-2 bg-rose-600 text-white font-bold rounded-lg flex items-center justify-center gap-2 mt-4"
+              className="w-full text-center py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg flex items-center justify-center gap-2 mt-4 transition-colors"
             >
               <ShieldAlert className="w-4 h-4" />
               Report Incident
@@ -550,6 +550,7 @@ export default function App() {
             onAddRescuer={handleAddRescuer}
             onUpdateIncidentStatus={handleUpdateIncidentStatus}
             onAddIncidentUpdate={handleAddIncidentUpdate}
+            addToast={addToast}
           />
         )}
 

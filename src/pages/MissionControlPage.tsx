@@ -39,6 +39,7 @@ interface MissionControlPageProps {
   onAddRescuer: (rescuer: Omit<Rescuer, 'id'>) => void;
   onUpdateIncidentStatus: (id: string, status: IncidentStatus) => void;
   onAddIncidentUpdate?: (id: string, update: { author: string, message: string, statusChanged?: IncidentStatus }) => void;
+  addToast?: (title: string, description: string, type?: 'success' | 'error' | 'info' | 'warning') => void;
 }
 
 const normalizeStatus = (status: string | IncidentStatus): IncidentStatus => {
@@ -75,7 +76,8 @@ export const MissionControlPage: React.FC<MissionControlPageProps> = ({
   onAddMissionUpdate,
   onAddRescuer,
   onUpdateIncidentStatus,
-  onAddIncidentUpdate
+  onAddIncidentUpdate,
+  addToast
 }) => {
   // Current Tab selection
   const [activeTab, setActiveTab] = useState<'feed' | 'ops' | 'rescuers' | 'matches'>('ops');
@@ -337,7 +339,11 @@ export const MissionControlPage: React.FC<MissionControlPageProps> = ({
     }
 
     setConfirmedMatchIds(prev => [...prev, pairId]);
-    alert(`Successfully verified connection! Sighting of [${titleB}] has been bound to the missing report of [${titleA}]. Handshakes logged.`);
+    if (addToast) {
+      addToast("Connection Confirmed", `Successfully verified connection! Sighting of [${titleB}] has been bound to the missing report of [${titleA}]. Handshakes logged.`, "success");
+    } else {
+      alert(`Successfully verified connection! Sighting of [${titleB}] has been bound to the missing report of [${titleA}]. Handshakes logged.`);
+    }
   };
 
   const handleDismissMatchAction = (pairId: string) => {
@@ -398,7 +404,11 @@ export const MissionControlPage: React.FC<MissionControlPageProps> = ({
   const handleLaunchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedIncidentId || !missionTitle || assignedRescuers.length === 0) {
-      alert("Please fill in the mission title, select an incident, and assign at least one rescuer.");
+      if (addToast) {
+        addToast("Launch Failed", "Please fill in the mission title, select an incident, and assign at least one rescuer.", "warning");
+      } else {
+        alert("Please fill in the mission title, select an incident, and assign at least one rescuer.");
+      }
       return;
     }
 
@@ -523,7 +533,11 @@ export const MissionControlPage: React.FC<MissionControlPageProps> = ({
   const handleAddRescuerSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!rescuerName || !rescuerContact) {
-      alert("Please enter a name and contact number.");
+      if (addToast) {
+        addToast("Registration Failed", "Please enter a name and contact number.", "warning");
+      } else {
+        alert("Please enter a name and contact number.");
+      }
       return;
     }
 
@@ -542,18 +556,18 @@ export const MissionControlPage: React.FC<MissionControlPageProps> = ({
   };
 
   return (
-    <div id="mission-control-root" className="min-h-[calc(100vh-64px)] bg-slate-950 text-slate-100 font-sans pb-16">
+    <div id="mission-control-root" className="min-h-[calc(100vh-64px)] bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans pb-16">
       
       {/* OPERATIONS HEADER OVERVIEW */}
-      <div className="bg-slate-900 border-b border-slate-800/80 py-6">
+      <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-black uppercase tracking-wider text-slate-100 flex items-center gap-2">
+              <h1 className="text-2xl font-black uppercase tracking-wider text-slate-850 dark:text-slate-100 flex items-center gap-2">
                 <ShieldAlert className="w-7 h-7 text-rose-500" />
                 PurrSignal Mission Control
               </h1>
-              <p className="text-xs text-slate-500 font-mono mt-1">
+              <p className="text-xs text-slate-450 dark:text-slate-500 font-mono mt-1">
                 SECURE NETWORK ACCESS | ACTIVE COORDINATION FEED
               </p>
             </div>
@@ -562,7 +576,7 @@ export const MissionControlPage: React.FC<MissionControlPageProps> = ({
               <button
                 id="ops-btn-add-rescuer"
                 onClick={() => setIsAddRescuerModalOpen(true)}
-                className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs font-semibold text-slate-300 transition-colors flex items-center gap-1.5"
+                className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-300 transition-colors flex items-center gap-1.5"
               >
                 <Users className="w-4 h-4 text-amber-500" />
                 Register Volunteer
@@ -582,43 +596,43 @@ export const MissionControlPage: React.FC<MissionControlPageProps> = ({
           {/* TELEMETRY STATS GRID */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
             
-            <div className="bg-slate-950/80 border border-slate-800/60 p-4 rounded-xl flex items-center gap-4">
-              <div className="p-3 bg-indigo-500/10 rounded-lg text-indigo-400 border border-indigo-500/20">
+            <div className="bg-white dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800/60 p-4 rounded-xl shadow-sm dark:shadow-none flex items-center gap-4">
+              <div className="p-3 bg-indigo-500/10 rounded-lg text-indigo-500 dark:text-indigo-400 border border-indigo-500/20">
                 <FileText className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-[10px] font-mono text-slate-500 block uppercase font-bold tracking-wider">Triage Queue</span>
-                <span className="text-lg font-bold font-mono text-slate-100">{openIncidentsCount} Open Incidents</span>
+                <span className="text-[10px] font-mono text-slate-400 dark:text-slate-500 block uppercase font-bold tracking-wider">Triage Queue</span>
+                <span className="text-lg font-bold font-mono text-slate-800 dark:text-slate-100">{openIncidentsCount} Open Incidents</span>
               </div>
             </div>
 
-            <div className="bg-slate-950/80 border border-slate-800/60 p-4 rounded-xl flex items-center gap-4">
-              <div className="p-3 bg-rose-500/10 rounded-lg text-rose-400 border border-rose-500/20">
+            <div className="bg-white dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800/60 p-4 rounded-xl shadow-sm dark:shadow-none flex items-center gap-4">
+              <div className="p-3 bg-rose-500/10 rounded-lg text-rose-550 dark:text-rose-400 border border-rose-500/20">
                 <Activity className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-[10px] font-mono text-slate-500 block uppercase font-bold tracking-wider">Live Tactical Operations</span>
-                <span className="text-lg font-bold font-mono text-rose-400">{activeMissionsCount} Active Missions</span>
+                <span className="text-[10px] font-mono text-slate-400 dark:text-slate-500 block uppercase font-bold tracking-wider">Live Tactical Operations</span>
+                <span className="text-lg font-bold font-mono text-rose-600 dark:text-rose-400">{activeMissionsCount} Active Missions</span>
               </div>
             </div>
 
-            <div className="bg-slate-950/80 border border-slate-800/60 p-4 rounded-xl flex items-center gap-4">
-              <div className="p-3 bg-emerald-500/10 rounded-lg text-emerald-400 border border-emerald-500/20">
+            <div className="bg-white dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800/60 p-4 rounded-xl shadow-sm dark:shadow-none flex items-center gap-4">
+              <div className="p-3 bg-emerald-500/10 rounded-lg text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
                 <Users className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-[10px] font-mono text-slate-500 block uppercase font-bold tracking-wider">Rescuers On Call</span>
-                <span className="text-lg font-bold font-mono text-emerald-400">{availableRescuersCount} Available</span>
+                <span className="text-[10px] font-mono text-slate-400 dark:text-slate-500 block uppercase font-bold tracking-wider">Rescuers On Call</span>
+                <span className="text-lg font-bold font-mono text-emerald-600 dark:text-emerald-400">{availableRescuersCount} Available</span>
               </div>
             </div>
 
-            <div className="bg-slate-950/80 border border-slate-800/60 p-4 rounded-xl flex items-center gap-4">
-              <div className="p-3 bg-amber-500/10 rounded-lg text-amber-400 border border-amber-500/20">
+            <div className="bg-white dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800/60 p-4 rounded-xl shadow-sm dark:shadow-none flex items-center gap-4">
+              <div className="p-3 bg-amber-500/10 rounded-lg text-amber-600 dark:text-amber-400 border border-amber-500/20">
                 <Cat className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-[10px] font-mono text-slate-500 block uppercase font-bold tracking-wider">Feline Reunions</span>
-                <span className="text-lg font-bold font-mono text-amber-400">342 Safe Recoveries</span>
+                <span className="text-[10px] font-mono text-slate-400 dark:text-slate-500 block uppercase font-bold tracking-wider">Feline Reunions</span>
+                <span className="text-lg font-bold font-mono text-amber-600 dark:text-amber-400">342 Safe Recoveries</span>
               </div>
             </div>
 
@@ -631,14 +645,14 @@ export const MissionControlPage: React.FC<MissionControlPageProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
         
         {/* TABS SELECTOR */}
-        <div className="flex border-b border-slate-800/60 gap-4 mb-6 overflow-x-auto scrollbar-none">
+        <div className="flex border-b border-slate-200 dark:border-slate-800/60 gap-4 mb-6 overflow-x-auto scrollbar-none">
           <button
             id="tab-ops"
             onClick={() => setActiveTab('ops')}
             className={`pb-4 px-1 text-sm font-bold border-b-2 transition-all flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'ops' 
-                ? 'border-rose-500 text-rose-400' 
-                : 'border-transparent text-slate-400 hover:text-slate-200'
+                ? 'border-rose-500 text-rose-500 dark:text-rose-400' 
+                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
             }`}
           >
             <Activity className="w-4 h-4" />
@@ -650,11 +664,11 @@ export const MissionControlPage: React.FC<MissionControlPageProps> = ({
             onClick={() => setActiveTab('matches')}
             className={`pb-4 px-1 text-sm font-bold border-b-2 transition-all flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'matches' 
-                ? 'border-purple-500 text-purple-400 font-extrabold' 
-                : 'border-transparent text-slate-400 hover:text-slate-200'
+                ? 'border-purple-500 text-purple-600 dark:text-purple-400 font-extrabold' 
+                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
             }`}
           >
-            <Sparkles className="w-4 h-4 text-purple-400 animate-pulse" />
+            <Sparkles className="w-4 h-4 text-purple-500 dark:text-purple-400 animate-pulse" />
             Possible Matches ({possibleMatches.length})
           </button>
 
@@ -663,8 +677,8 @@ export const MissionControlPage: React.FC<MissionControlPageProps> = ({
             onClick={() => setActiveTab('feed')}
             className={`pb-4 px-1 text-sm font-bold border-b-2 transition-all flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'feed' 
-                ? 'border-indigo-500 text-indigo-400' 
-                : 'border-transparent text-slate-400 hover:text-slate-200'
+                ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400' 
+                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
             }`}
           >
             <FileText className="w-4 h-4" />
@@ -676,8 +690,8 @@ export const MissionControlPage: React.FC<MissionControlPageProps> = ({
             onClick={() => setActiveTab('rescuers')}
             className={`pb-4 px-1 text-sm font-bold border-b-2 transition-all flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'rescuers' 
-                ? 'border-amber-500 text-amber-400' 
-                : 'border-transparent text-slate-400 hover:text-slate-200'
+                ? 'border-amber-500 text-amber-600 dark:text-amber-400' 
+                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
             }`}
           >
             <Users className="w-4 h-4" />
@@ -690,8 +704,8 @@ export const MissionControlPage: React.FC<MissionControlPageProps> = ({
           <div className="space-y-6">
             
             {/* SUB-STATUS KANBAN CATEGORY PILTERS */}
-            <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl">
-              <span className="text-[10px] font-mono text-slate-500 font-bold uppercase tracking-wider block mb-2.5 flex items-center gap-1">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-xl">
+              <span className="text-[10px] font-mono text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider block mb-2.5 flex items-center gap-1">
                 <ListFilter className="w-3.5 h-3.5 text-rose-500" />
                 Filter Workspace Columns
               </span>
@@ -714,7 +728,7 @@ export const MissionControlPage: React.FC<MissionControlPageProps> = ({
                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold font-mono transition-all border ${
                       opsFilter === item.id 
                         ? 'bg-rose-600 border-rose-500 text-white shadow-lg shadow-rose-600/10' 
-                        : 'bg-slate-950 hover:bg-slate-900 border-slate-850 text-slate-400 hover:text-slate-200'
+                        : 'bg-slate-50 hover:bg-slate-100 dark:bg-slate-950 dark:hover:bg-slate-900 border-slate-200 dark:border-slate-850 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                     }`}
                   >
                     {item.label} ({item.count})
@@ -749,13 +763,13 @@ export const MissionControlPage: React.FC<MissionControlPageProps> = ({
         {activeTab === 'matches' && (
           <div className="space-y-6">
             
-            <div className="bg-purple-950/20 border border-purple-900/30 p-4 rounded-xl flex items-start gap-3.5">
-              <div className="p-2 bg-purple-500/10 rounded-lg text-purple-400 border border-purple-500/20">
+            <div className="bg-purple-50 dark:bg-purple-950/20 border border-purple-100 dark:border-purple-900/30 p-4 rounded-xl flex items-start gap-3.5">
+              <div className="p-2 bg-purple-500/10 rounded-lg text-purple-600 dark:text-purple-400 border border-purple-500/20">
                 <Sparkles className="w-5 h-5 animate-pulse" />
               </div>
               <div className="space-y-1">
-                <h3 className="text-sm font-bold text-purple-300">Intelligent Possible Matching Matrix</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <h3 className="text-sm font-bold text-purple-700 dark:text-purple-300">Intelligent Possible Matching Matrix</h3>
+                <p className="text-xs text-slate-650 dark:text-slate-400 leading-relaxed">
                   This panel computes highly explainable plausibility scores comparing missing cats with sightings and found cats. 
                   The system does not auto-merge records to avoid dispatch errors. Review comparison details below to manually link cases.
                 </p>
@@ -763,9 +777,9 @@ export const MissionControlPage: React.FC<MissionControlPageProps> = ({
             </div>
 
             {possibleMatches.length === 0 ? (
-              <div className="bg-slate-900 border border-slate-800 p-12 text-center rounded-2xl">
-                <Cat className="w-12 h-12 text-slate-700 mx-auto stroke-1 mb-3" />
-                <h3 className="font-bold text-sm text-slate-300">All Candidate Pairs Triage Complete</h3>
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-12 text-center rounded-2xl shadow-sm dark:shadow-none">
+                <Cat className="w-12 h-12 text-slate-400 dark:text-slate-700 mx-auto stroke-1 mb-3" />
+                <h3 className="font-bold text-sm text-slate-750 dark:text-slate-300">All Candidate Pairs Triage Complete</h3>
                 <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
                   No active open missing profiles match filed sightings or found cats currently. Check back as new reports arrive.
                 </p>
@@ -784,10 +798,10 @@ export const MissionControlPage: React.FC<MissionControlPageProps> = ({
                   const featuresB = incB.catProfile?.distinctiveFeatures || incB.catDescription?.distinctiveFeatures || "None noted";
 
                   return (
-                    <div key={pId} className="bg-slate-900 border border-slate-800/80 rounded-2xl overflow-hidden shadow-2xl flex flex-col">
+                    <div key={pId} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 rounded-2xl overflow-hidden shadow-lg dark:shadow-2xl flex flex-col">
                       
                       {/* HEADER PLOTS MATCH MATCH METRIC */}
-                      <div className="bg-slate-950 px-4 py-3 border-b border-slate-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="bg-slate-50 dark:bg-slate-950 px-4 py-3 border-b border-slate-200 dark:border-slate-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div className="flex items-center gap-2">
                           <span className="text-[10px] font-mono font-bold bg-purple-500/10 text-purple-400 px-2.5 py-1 rounded border border-purple-500/20 flex items-center gap-1.5">
                             <Sparkles className="w-3.5 h-3.5" />
@@ -821,44 +835,44 @@ export const MissionControlPage: React.FC<MissionControlPageProps> = ({
                       </div>
 
                       {/* SIDE-BY-SIDE MATCHING PANELS */}
-                      <div className="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-800/60">
+                      <div className="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-200 dark:divide-slate-800/60">
                         
                         {/* CASE A: MISSING REPORT */}
                         <div className="p-5 space-y-4">
                           <div className="flex items-start justify-between">
                             <div>
-                              <span className="text-[9px] font-mono font-bold text-purple-400 uppercase tracking-widest bg-purple-500/10 px-1.5 py-0.5 rounded">
+                              <span className="text-[9px] font-mono font-bold text-purple-600 dark:text-purple-400 uppercase tracking-widest bg-purple-500/10 px-1.5 py-0.5 rounded">
                                 Original Missing Report
                               </span>
-                              <h4 className="text-sm font-bold text-slate-100 mt-1 flex items-center gap-1.5">
-                                <Cat className="w-4 h-4 text-purple-400" />
+                              <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100 mt-1 flex items-center gap-1.5">
+                                <Cat className="w-4 h-4 text-purple-500" />
                                 {incA.title}
                               </h4>
-                              <span className="text-[10px] font-mono text-slate-500 block mt-0.5">ID: {incA.id}</span>
+                              <span className="text-[10px] font-mono text-slate-400 dark:text-slate-500 block mt-0.5">ID: {incA.id}</span>
                             </div>
-                            <span className="text-xs font-mono text-slate-400 bg-slate-950 px-2.5 py-1 rounded border border-slate-800">
+                            <span className="text-xs font-mono text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-950 px-2.5 py-1 rounded border border-slate-250 dark:border-slate-800">
                               {new Date(incA.reportedAt).toLocaleDateString()}
                             </span>
                           </div>
 
                           <div className="flex gap-4">
                             {incA.evidence?.[0]?.url && (
-                              <div className="w-20 h-20 rounded-xl overflow-hidden border border-slate-800 bg-slate-950 flex-shrink-0">
+                              <div className="w-20 h-20 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex-shrink-0">
                                 <img src={incA.evidence[0].url} alt="Missing profile photo" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                               </div>
                             )}
-                            <div className="space-y-1 text-xs text-slate-300">
-                              <div><span className="text-slate-500">Coat Color:</span> <strong className="text-slate-200">{colorA}</strong></div>
-                              <div><span className="text-slate-500">Breed/Pattern:</span> <span className="text-slate-400">{breedA}</span></div>
-                              <div><span className="text-slate-500">Hallmarks:</span> <span className="text-slate-400">{featuresA}</span></div>
-                              <div className="text-[10px] text-slate-500 flex items-center gap-0.5 mt-1.5">
-                                <MapPin className="w-3 h-3 text-slate-600" />
+                            <div className="space-y-1 text-xs text-slate-650 dark:text-slate-300">
+                              <div><span className="text-slate-400 dark:text-slate-500">Coat Color:</span> <strong className="text-slate-800 dark:text-slate-200">{colorA}</strong></div>
+                              <div><span className="text-slate-400 dark:text-slate-500">Breed/Pattern:</span> <span className="text-slate-500 dark:text-slate-400">{breedA}</span></div>
+                              <div><span className="text-slate-400 dark:text-slate-500">Hallmarks:</span> <span className="text-slate-500 dark:text-slate-400">{featuresA}</span></div>
+                              <div className="text-[10px] text-slate-400 dark:text-slate-500 flex items-center gap-0.5 mt-1.5">
+                                <MapPin className="w-3 h-3 text-slate-400 dark:text-slate-600" />
                                 <span className="truncate">{incA.location.name}</span>
                               </div>
                             </div>
                           </div>
 
-                          <p className="text-xs text-slate-400 bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/40 italic">
+                          <p className="text-xs text-slate-650 dark:text-slate-400 bg-slate-50/60 dark:bg-slate-950/40 p-2.5 rounded-lg border border-slate-150 dark:border-slate-800/40 italic">
                             "{incA.notes}"
                           </p>
                         </div>
@@ -867,38 +881,38 @@ export const MissionControlPage: React.FC<MissionControlPageProps> = ({
                         <div className="p-5 space-y-4">
                           <div className="flex items-start justify-between">
                             <div>
-                              <span className="text-[9px] font-mono font-bold text-amber-500 uppercase tracking-widest bg-amber-500/10 px-1.5 py-0.5 rounded">
+                              <span className="text-[9px] font-mono font-bold text-amber-600 dark:text-amber-500 uppercase tracking-widest bg-amber-500/10 px-1.5 py-0.5 rounded">
                                 Sighting / Found Sighting
                               </span>
-                              <h4 className="text-sm font-bold text-slate-100 mt-1 flex items-center gap-1.5">
-                                <Eye className="w-4 h-4 text-amber-400" />
+                              <h4 className="text-sm font-bold text-slate-800 dark:text-slate-100 mt-1 flex items-center gap-1.5">
+                                <Eye className="w-4 h-4 text-amber-500 dark:text-amber-400" />
                                 {incB.title}
                               </h4>
-                              <span className="text-[10px] font-mono text-slate-500 block mt-0.5">ID: {incB.id}</span>
+                              <span className="text-[10px] font-mono text-slate-400 dark:text-slate-500 block mt-0.5">ID: {incB.id}</span>
                             </div>
-                            <span className="text-xs font-mono text-slate-400 bg-slate-950 px-2.5 py-1 rounded border border-slate-800">
+                            <span className="text-xs font-mono text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-950 px-2.5 py-1 rounded border border-slate-250 dark:border-slate-800">
                               {new Date(incB.reportedAt).toLocaleDateString()}
                             </span>
                           </div>
 
                           <div className="flex gap-4">
                             {incB.evidence?.[0]?.url && (
-                              <div className="w-20 h-20 rounded-xl overflow-hidden border border-slate-800 bg-slate-950 flex-shrink-0">
+                              <div className="w-20 h-20 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex-shrink-0">
                                 <img src={incB.evidence[0].url} alt="Sighting photo" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                               </div>
                             )}
-                            <div className="space-y-1 text-xs text-slate-300">
-                              <div><span className="text-slate-500">Sighted Color:</span> <strong className="text-slate-200">{colorB}</strong></div>
-                              <div><span className="text-slate-500">Breed/Pattern:</span> <span className="text-slate-400">{breedB}</span></div>
-                              <div><span className="text-slate-500">Sighted Hallmarks:</span> <span className="text-slate-400">{featuresB}</span></div>
-                              <div className="text-[10px] text-slate-500 flex items-center gap-0.5 mt-1.5">
-                                <MapPin className="w-3 h-3 text-slate-600" />
+                            <div className="space-y-1 text-xs text-slate-650 dark:text-slate-300">
+                              <div><span className="text-slate-400 dark:text-slate-500">Sighted Color:</span> <strong className="text-slate-800 dark:text-slate-200">{colorB}</strong></div>
+                              <div><span className="text-slate-400 dark:text-slate-500">Breed/Pattern:</span> <span className="text-slate-500 dark:text-slate-400">{breedB}</span></div>
+                              <div><span className="text-slate-400 dark:text-slate-500">Sighted Hallmarks:</span> <span className="text-slate-500 dark:text-slate-400">{featuresB}</span></div>
+                              <div className="text-[10px] text-slate-400 dark:text-slate-500 flex items-center gap-0.5 mt-1.5">
+                                <MapPin className="w-3 h-3 text-slate-400 dark:text-slate-600" />
                                 <span className="truncate">{incB.location.name}</span>
                               </div>
                             </div>
                           </div>
 
-                          <p className="text-xs text-slate-400 bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/40 italic">
+                          <p className="text-xs text-slate-650 dark:text-slate-400 bg-slate-50/60 dark:bg-slate-950/40 p-2.5 rounded-lg border border-slate-150 dark:border-slate-800/40 italic">
                             "{incB.notes}"
                           </p>
                         </div>
@@ -906,13 +920,13 @@ export const MissionControlPage: React.FC<MissionControlPageProps> = ({
                       </div>
 
                       {/* FOOTER PLAUSIBILITY REASONS AND ACTIONS */}
-                      <div className="bg-slate-950/80 p-4 border-t border-slate-800/55 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div className="bg-slate-50 dark:bg-slate-950/80 p-4 border-t border-slate-200 dark:border-slate-800/55 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div className="space-y-1 flex-1">
-                          <span className="text-[10px] uppercase font-mono font-bold tracking-wider text-slate-500 block">Explainable Match Factors</span>
+                          <span className="text-[10px] uppercase font-mono font-bold tracking-wider text-slate-450 dark:text-slate-500 block">Explainable Match Factors</span>
                           <div className="flex flex-wrap gap-1.5">
                             {reasons.map((r, i) => (
-                              <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 bg-slate-900 border border-slate-800 text-[10px] font-mono text-slate-400 rounded">
-                                <Check className="w-3 h-3 text-emerald-400" /> {r}
+                              <span key={i} className="inline-flex items-center gap-1 px-2 py-0.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[10px] font-mono text-slate-600 dark:text-slate-400 rounded">
+                                <Check className="w-3 h-3 text-emerald-500 dark:text-emerald-400" /> {r}
                               </span>
                             ))}
                           </div>
@@ -923,7 +937,7 @@ export const MissionControlPage: React.FC<MissionControlPageProps> = ({
                           <button
                             id={`match-btn-dismiss-${pId}`}
                             onClick={() => handleDismissMatchAction(pId)}
-                            className="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-850 border border-slate-800 text-xs font-semibold rounded-lg text-rose-400 transition-all flex items-center gap-1"
+                            className="px-3.5 py-1.5 bg-white hover:bg-slate-100 dark:bg-slate-900 dark:hover:bg-slate-850 border border-slate-200 dark:border-slate-800 text-xs font-semibold rounded-lg text-rose-500 dark:text-rose-400 transition-all flex items-center gap-1"
                             title="Dismiss Match"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -953,9 +967,9 @@ export const MissionControlPage: React.FC<MissionControlPageProps> = ({
         {/* TAB 3: INCIDENT SIGHTING QUEUE */}
         {activeTab === 'feed' && (
           <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900 border border-slate-800 p-4 rounded-xl">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-xl">
               <div>
-                <h3 className="text-sm font-bold">Priority Triage Queue</h3>
+                <h3 className="text-sm font-bold text-slate-800 dark:text-white">Priority Triage Queue</h3>
                 <p className="text-xs text-slate-500">Unresolved incidents matching community logs. Click to view detailed analysis and manage status.</p>
               </div>
             </div>
@@ -980,28 +994,28 @@ export const MissionControlPage: React.FC<MissionControlPageProps> = ({
           <div className="space-y-6">
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {rescuers.map(r => (
-                <div key={r.id} className="bg-slate-900 border border-slate-800 p-4 rounded-xl flex items-start gap-3.5 relative overflow-hidden">
+                <div key={r.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-xl flex items-start gap-3.5 relative overflow-hidden shadow-sm dark:shadow-none">
                   <div className={`absolute top-0 right-0 bottom-0 w-1 ${
                     r.status === 'available' ? 'bg-emerald-500' :
                     r.status === 'on_mission' ? 'bg-amber-500' : 'bg-slate-700'
                   }`} />
 
-                  <div className="p-2.5 bg-slate-800 rounded-lg text-slate-400 border border-slate-700/60">
-                    <Users className="w-5 h-5 text-amber-500" />
+                  <div className="p-2.5 bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700/60">
+                    <Users className="w-5 h-5 text-amber-600 dark:text-amber-500" />
                   </div>
 
-                  <div className="space-y-1">
+                  <div className="space-y-1 text-left">
                     <div className="flex items-center gap-1.5">
-                      <h4 className="text-sm font-bold text-slate-200">{r.name}</h4>
+                      <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">{r.name}</h4>
                       <span className={`w-2 h-2 rounded-full ${
                         r.status === 'available' ? 'bg-emerald-500' :
                         r.status === 'on_mission' ? 'bg-amber-500' : 'bg-slate-500'
                       }`} />
                     </div>
-                    <span className="text-[10px] uppercase font-mono font-bold tracking-wider text-slate-500 block">
+                    <span className="text-[10px] uppercase font-mono font-bold tracking-wider text-slate-450 dark:text-slate-500 block">
                       {r.role.replace('_', ' ')}
                     </span>
-                    <div className="text-xs text-slate-400 mt-2">
+                    <div className="text-xs text-slate-650 dark:text-slate-400 mt-2">
                       <div>Contact: {r.contact}</div>
                       <div className="text-[10px] text-slate-500 mt-0.5">Base: {r.location}</div>
                     </div>

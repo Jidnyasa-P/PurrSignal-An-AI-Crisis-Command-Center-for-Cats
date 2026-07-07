@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 interface ThreeDCatProps {
   className?: string;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   interactive?: boolean;
 }
 
@@ -59,6 +59,7 @@ export const ThreeDCat: React.FC<ThreeDCatProps> = ({
   }, [interactive, isHovered]);
 
   const sizeClasses = {
+    xs: 'w-10 h-10',
     sm: 'w-16 h-16',
     md: 'w-32 h-32',
     lg: 'w-48 h-48',
