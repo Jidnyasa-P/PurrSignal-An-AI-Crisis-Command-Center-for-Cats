@@ -15,9 +15,14 @@ import {
   ExternalLink,
   CheckCircle2,
   ListFilter,
-  X
+  X,
+  Sparkles,
+  Lock,
+  Unlock,
+  Eye,
+  EyeOff
 } from 'lucide-react';
-import { Incident, UrgencyLevel, IncidentStatus } from '../types';
+import { Incident, UrgencyLevel, IncidentStatus, IncidentType } from '../types';
 import { StatusBadge, UrgencyIndicator } from '../components/UI';
 
 interface CrisisMapPageProps {
@@ -55,12 +60,20 @@ export const CrisisMapPage: React.FC<CrisisMapPageProps> = ({
   const [zoom, setZoom] = useState(1.2);
   const [viewCenter, setViewCenter] = useState({ x: 0, y: 0 });
 
+  // Privacy control: Authorized rescue dispatch can toggle exact coordinates
+  const [exactCoordsEnabled, setExactCoordsEnabled] = useState(false);
+
   // Filtered list
   const filteredIncidents = useMemo(() => {
     return incidents.filter(inc => {
+      const colorText = (inc.catProfile?.color || inc.catDescription?.color || "").toLowerCase();
+      const breedText = (inc.catProfile?.breed || "").toLowerCase();
+      const markingsText = (inc.catProfile?.distinctiveFeatures || inc.catDescription?.distinctiveFeatures || "").toLowerCase();
       const matchesSearch = inc.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                             inc.location.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                            inc.catDescription.color.toLowerCase().includes(searchTerm.toLowerCase());
+                            colorText.includes(searchTerm.toLowerCase()) ||
+                            breedText.includes(searchTerm.toLowerCase()) ||
+                            markingsText.includes(searchTerm.toLowerCase());
       
       const matchesUrgency = urgencyFilter === 'all' || 
                              inc.urgency === urgencyFilter || 
@@ -86,9 +99,7 @@ export const CrisisMapPage: React.FC<CrisisMapPageProps> = ({
     });
   }, [incidents, searchTerm, urgencyFilter, statusFilter]);
 
-  // Map Bounds Projection:
-  // Convert real lat/lng in San Francisco area (centered roughly at lat 37.77, lng -122.43)
-  // to beautiful coordinates on our 800x500 SVG vector canvas.
+  // Project map coordinates
   const projectCoords = (lat: number, lng: number) => {
     // SF Bounds range
     const minLat = 37.74;
@@ -99,12 +110,27 @@ export const CrisisMapPage: React.FC<CrisisMapPageProps> = ({
     const latPct = (lat - minLat) / (maxLat - minLat);
     const lngPct = (lng - minLng) / (maxLng - minLng);
 
-    // SVG coordinate space: width 800, height 500
-    // Lat increases upwards, but SVG Y increases downwards.
     const x = 50 + lngPct * 700;
     const y = 450 - latPct * 400;
 
     return { x, y };
+  };
+
+  // Safe Coordinate Blurring depending on Authorization status
+  const getRenderCoords = (inc: Incident) => {
+    let lat = inc.location.lat;
+    let lng = inc.location.lng;
+    
+    if (!exactCoordsEnabled) {
+      // Deterministic offset using ID character codes to blur/fuzz the marker stably
+      const seed = inc.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+      const latOffset = ((seed % 100) / 100 - 0.5) * 0.007; // fuzz roughly ~400 meters
+      const lngOffset = (((seed * 7) % 100) / 100 - 0.5) * 0.007;
+      lat += latOffset;
+      lng += lngOffset;
+    }
+    
+    return projectCoords(lat, lng);
   };
 
   const handlePinClick = (id: string) => {
@@ -114,6 +140,43 @@ export const CrisisMapPage: React.FC<CrisisMapPageProps> = ({
   const selectedIncidentObj = useMemo(() => {
     return incidents.find(inc => inc.id === activePinId);
   }, [incidents, activePinId]);
+
+  // EVIDENCE TRAIL GENERATION:
+  // If the active pin is a MISSING cat report, automatically look up all related sightings/found incidents (unresolved)
+  // that match basic coat markers, and sort them chronologically to trace the cat's trail.
+  const evidenceTrail = useMemo(() => {
+    if (!selectedIncidentObj || selectedIncidentObj.type !== IncidentType.MISSING) return null;
+
+    const missColor = (selectedIncidentObj.catProfile?.color || selectedIncidentObj.catDescription?.color || "").toLowerCase();
+    
+    // Find matching sightings/found reports
+    const matches = incidents.filter(i => {
+      if (i.id === selectedIncidentObj.id) return false;
+      
+      const norm = normalizeStatus(i.status);
+      if (norm === IncidentStatus.REUNITED || norm === IncidentStatus.CLOSED) return false;
+
+      // Ensure they are sightings or found cats
+      const isSightingOrFound = i.type === IncidentType.SIGHTING || i.type === IncidentType.FOUND || i.type === IncidentType.INJURED;
+      if (!isSightingOrFound) return false;
+
+      const sightColor = (i.catProfile?.color || i.catDescription?.color || "").toLowerCase();
+      
+      // Look for orange, black, white, grey, tabby matching
+      const keywords = ['orange', 'ginger', 'black', 'white', 'grey', 'gray', 'tabby', 'calico', 'tuxedo', 'tortie'];
+      const sharedKeywords = keywords.filter(kw => missColor.includes(kw) && sightColor.includes(kw));
+      
+      return sharedKeywords.length > 0;
+    });
+
+    // Sort chronologically by reportedAt
+    const sorted = [...matches].sort((a, b) => new Date(a.reportedAt).getTime() - new Date(b.reportedAt).getTime());
+    
+    return {
+      missingIncident: selectedIncidentObj,
+      sightings: sorted
+    };
+  }, [selectedIncidentObj, incidents]);
 
   return (
     <div id="crisis-map-container" className="h-[calc(100vh-64px)] flex flex-col md:flex-row overflow-hidden bg-slate-950 text-white font-sans">
@@ -192,7 +255,7 @@ export const CrisisMapPage: React.FC<CrisisMapPageProps> = ({
             </div>
           ) : (
             filteredIncidents.map(inc => {
-              const projected = projectCoords(inc.location.lat, inc.location.lng);
+              const projected = getRenderCoords(inc);
               const isActive = inc.id === activePinId;
               
               return (
@@ -220,7 +283,12 @@ export const CrisisMapPage: React.FC<CrisisMapPageProps> = ({
                     </span>
                   </div>
 
-                  <h4 className="text-xs font-bold text-slate-200 mt-1 line-clamp-1">{inc.title}</h4>
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <span className="text-[10px] bg-slate-950 text-slate-300 font-mono font-bold px-1.5 py-0.5 rounded border border-slate-800/80">
+                      {inc.type}
+                    </span>
+                    <h4 className="text-xs font-bold text-slate-200 line-clamp-1 flex-1">{inc.title}</h4>
+                  </div>
                   
                   <div className="flex items-center gap-1.5 mt-2">
                     <StatusBadge status={inc.status} size="sm" />
@@ -271,6 +339,29 @@ export const CrisisMapPage: React.FC<CrisisMapPageProps> = ({
           </div>
 
           <div className="flex items-center gap-2 self-start sm:self-auto pointer-events-auto">
+            {/* PRIVACY COORDINATES SELECTOR */}
+            <button
+              id="map-toggle-precision"
+              onClick={() => setExactCoordsEnabled(!exactCoordsEnabled)}
+              className={`px-3 py-1.5 text-xs font-mono font-bold rounded-lg border flex items-center gap-1.5 shadow-lg transition-all ${
+                exactCoordsEnabled 
+                  ? 'bg-rose-600 text-white border-rose-500' 
+                  : 'bg-slate-900/90 text-slate-400 border-slate-800 hover:text-slate-200'
+              }`}
+            >
+              {exactCoordsEnabled ? (
+                <>
+                  <Unlock className="w-3.5 h-3.5 text-emerald-400" />
+                  Exact GPS (Authorized Ops)
+                </>
+              ) : (
+                <>
+                  <Lock className="w-3.5 h-3.5 text-amber-500" />
+                  Approximate (Public View)
+                </>
+              )}
+            </button>
+
             {/* Legend Pop */}
             <div className="bg-slate-900/90 backdrop-blur-md px-3 py-2 rounded-xl border border-slate-800 flex items-center gap-3 text-[10px] text-slate-400 font-mono shadow-lg">
               <span className="flex items-center gap-1">
@@ -308,11 +399,9 @@ export const CrisisMapPage: React.FC<CrisisMapPageProps> = ({
 
             {/* Simulated streets, water, parks using sleek stylized vector lines */}
             <g id="map-aesthetic-features" opacity="0.15">
-              {/* Coastline SF Bay */}
               <path d="M 0 150 C 150 140, 200 80, 250 50 C 350 10, 450 0, 800 0 L 800 500 L 0 500 Z" fill="#1e1b4b" opacity="0.3" />
               <path d="M 0 150 C 150 140, 200 80, 250 50 C 350 10, 450 0, 800 0" fill="none" stroke="#312e81" strokeWidth="3" />
               
-              {/* Major Roads Grid */}
               <line x1="50" y1="0" x2="50" y2="500" stroke="#475569" strokeWidth="1.5" />
               <line x1="200" y1="0" x2="200" y2="500" stroke="#475569" strokeWidth="1.5" />
               <line x1="350" y1="0" x2="350" y2="500" stroke="#475569" strokeWidth="1.5" />
@@ -324,11 +413,9 @@ export const CrisisMapPage: React.FC<CrisisMapPageProps> = ({
               <line x1="0" y1="340" x2="800" y2="340" stroke="#475569" strokeWidth="1.5" />
               <line x1="0" y1="460" x2="800" y2="460" stroke="#475569" strokeWidth="1.5" />
 
-              {/* Angle diagonal bypass highways */}
               <line x1="0" y1="400" x2="600" y2="0" stroke="#64748b" strokeWidth="2" strokeDasharray="5,5" />
               <line x1="150" y1="500" x2="800" y2="150" stroke="#64748b" strokeWidth="2" strokeDasharray="5,5" />
 
-              {/* Designated Safe/Park Zones (Green areas) */}
               <rect x="80" y="240" width="100" height="80" rx="10" fill="#064e3b" opacity="0.3" />
               <text x="130" y="285" fill="#34d399" fontSize="10" fontFamily="monospace" textAnchor="middle" opacity="0.6">Presidio Zone</text>
 
@@ -336,16 +423,75 @@ export const CrisisMapPage: React.FC<CrisisMapPageProps> = ({
               <text x="490" y="155" fill="#34d399" fontSize="10" fontFamily="monospace" textAnchor="middle" opacity="0.6">Central Park Node</text>
             </g>
 
+            {/* CHRONOLOGICAL EVIDENCE TRAIL PATHS */}
+            {evidenceTrail && evidenceTrail.sightings.length > 0 && (
+              <g id="map-evidence-trail" opacity="0.85">
+                {(() => {
+                  const pts: Array<{ x: number; y: number }> = [];
+                  // Start point: missing cat coordinates
+                  pts.push(getRenderCoords(evidenceTrail.missingIncident));
+                  
+                  // Subsequent sighting coordinates
+                  evidenceTrail.sightings.forEach(sight => {
+                    pts.push(getRenderCoords(sight));
+                  });
+
+                  // Render path
+                  let dPath = `M ${pts[0].x} ${pts[0].y}`;
+                  for (let index = 1; index < pts.length; index++) {
+                    dPath += ` L ${pts[index].x} ${pts[index].y}`;
+                  }
+
+                  return (
+                    <>
+                      {/* Outer fuzzy path */}
+                      <path 
+                        d={dPath} 
+                        fill="none" 
+                        stroke="#c084fc" 
+                        strokeWidth="4" 
+                        strokeDasharray="6,4" 
+                        className="animate-pulse"
+                      />
+                      {/* Core target line */}
+                      <path 
+                        d={dPath} 
+                        fill="none" 
+                        stroke="#a855f7" 
+                        strokeWidth="2" 
+                      />
+                    </>
+                  );
+                })()}
+              </g>
+            )}
+
             {/* DYNAMIC INCIDENT MARKERS */}
             <g id="map-feline-markers">
               {filteredIncidents.map(inc => {
-                const projected = projectCoords(inc.location.lat, inc.location.lng);
+                const projected = getRenderCoords(inc);
                 const isActive = inc.id === activePinId;
-                const isCritical = inc.urgency === 'critical';
-                const isHigh = inc.urgency === 'high';
+                const isCritical = inc.urgency === 'critical' || inc.urgency === 'CRITICAL';
+                const isHigh = inc.urgency === 'high' || inc.urgency === 'HIGH';
                 
                 // Color mapping
                 const markerColor = isCritical ? '#ef4444' : isHigh ? '#f97316' : '#0ea5e9';
+
+                // Shape styling
+                const isMissingType = inc.type === IncidentType.MISSING;
+
+                // Sequential Sighting Trail Badge Indicator
+                let trailIndex = -1;
+                if (evidenceTrail) {
+                  if (evidenceTrail.missingIncident.id === inc.id) {
+                    trailIndex = 0; // Origin
+                  } else {
+                    const idx = evidenceTrail.sightings.findIndex(s => s.id === inc.id);
+                    if (idx !== -1) {
+                      trailIndex = idx + 1; // 1-based order
+                    }
+                  }
+                }
 
                 return (
                   <g 
@@ -368,34 +514,77 @@ export const CrisisMapPage: React.FC<CrisisMapPageProps> = ({
                     )}
 
                     {/* Standard marker background shadow ring */}
-                    <circle 
-                      cx={projected.x} 
-                      cy={projected.y} 
-                      r={isActive ? "10" : "7"} 
-                      fill="rgba(15, 23, 42, 0.8)" 
-                      stroke={isActive ? "#fbbf24" : "rgba(255,255,255,0.4)"} 
-                      strokeWidth={isActive ? "2" : "1"}
-                    />
+                    {isMissingType ? (
+                      // Draw unique diamond pin for Missing Cat profile
+                      <polygon
+                        points={`${projected.x},${projected.y - (isActive ? 12 : 9)} ${projected.x + (isActive ? 12 : 9)},${projected.y} ${projected.x},${projected.y + (isActive ? 12 : 9)} ${projected.x - (isActive ? 12 : 9)},${projected.y}`}
+                        fill="rgba(15, 23, 42, 0.9)"
+                        stroke={isActive ? "#fbbf24" : "#c084fc"}
+                        strokeWidth={isActive ? "2.5" : "1.5"}
+                      />
+                    ) : (
+                      // Draw circle pin for Sightings/Found records
+                      <circle 
+                        cx={projected.x} 
+                        cy={projected.y} 
+                        r={isActive ? "10" : "7.5"} 
+                        fill="rgba(15, 23, 42, 0.85)" 
+                        stroke={isActive ? "#fbbf24" : "rgba(255,255,255,0.45)"} 
+                        strokeWidth={isActive ? "2.5" : "1"}
+                      />
+                    )}
 
-                    {/* Colored inner dot */}
-                    <circle 
-                      cx={projected.x} 
-                      cy={projected.y} 
-                      r={isActive ? "5" : "3.5"} 
-                      fill={markerColor} 
-                    />
+                    {/* Inner colored dot */}
+                    {isMissingType ? (
+                      <polygon
+                        points={`${projected.x},${projected.y - (isActive ? 6 : 4)} ${projected.x + (isActive ? 6 : 4)},${projected.y} ${projected.x},${projected.y + (isActive ? 6 : 4)} ${projected.x - (isActive ? 6 : 4)},${projected.y}`}
+                        fill="#c084fc"
+                      />
+                    ) : (
+                      <circle 
+                        cx={projected.x} 
+                        cy={projected.y} 
+                        r={isActive ? "5" : "4"} 
+                        fill={markerColor} 
+                      />
+                    )}
+
+                    {/* Sequential Sighting Trail Badge Indicator */}
+                    {trailIndex !== -1 && (
+                      <g>
+                        <circle
+                          cx={projected.x + 9}
+                          cy={projected.y - 9}
+                          r="6.5"
+                          fill="#a855f7"
+                          stroke="#1e1b4b"
+                          strokeWidth="1"
+                        />
+                        <text
+                          x={projected.x + 9}
+                          y={projected.y - 6.5}
+                          fill="#ffffff"
+                          fontSize="7"
+                          fontWeight="bold"
+                          textAnchor="middle"
+                        >
+                          {trailIndex === 0 ? "★" : trailIndex}
+                        </text>
+                      </g>
+                    )}
 
                     {/* Simple flag hover labels */}
                     <text 
                       x={projected.x} 
-                      y={projected.y - 12} 
-                      fill="#cbd5e1" 
+                      y={projected.y - 14} 
+                      fill="#e2e8f0" 
                       fontSize="9" 
+                      fontWeight="bold"
                       fontFamily="monospace"
                       textAnchor="middle"
-                      className="opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none bg-slate-900"
+                      className="opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none bg-slate-900 px-1 rounded shadow"
                     >
-                      {inc.catDescription.color}
+                      {inc.catProfile?.color || inc.catDescription?.color || "Unknown"} ({inc.type})
                     </text>
                   </g>
                 );
@@ -412,37 +601,66 @@ export const CrisisMapPage: React.FC<CrisisMapPageProps> = ({
                 initial={{ opacity: 0, y: 20, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 20, scale: 0.95 }}
-                className="absolute bottom-6 left-6 right-6 md:left-auto md:right-6 z-20 max-w-sm bg-slate-900/95 backdrop-blur-md border border-slate-800 rounded-2xl p-4 shadow-2xl space-y-3 pointer-events-auto"
+                className="absolute bottom-6 left-6 right-6 md:left-auto md:right-6 z-20 max-w-sm bg-slate-900/95 backdrop-blur-md border border-slate-800 rounded-2xl p-4 shadow-2xl space-y-3 pointer-events-auto text-left"
               >
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
-                    <span className="text-[9px] font-mono text-slate-500 uppercase font-bold tracking-widest block">Signal Node Verified</span>
+                    <span className="text-[9px] font-mono text-slate-500 uppercase font-bold tracking-widest block flex items-center gap-1">
+                      <Sparkles className="w-3.5 h-3.5 text-purple-400 animate-pulse" />
+                      Feline Tactical Radar Active
+                    </span>
                     <h3 className="text-sm font-bold text-slate-100 line-clamp-1">{selectedIncidentObj.title}</h3>
                   </div>
                   <button 
                     id="map-tooltip-close"
                     onClick={() => setActivePinId(null)}
-                    className="p-1 rounded text-slate-500 hover:text-slate-300 transition-colors"
+                    className="p-1 rounded text-slate-550 hover:text-slate-300 transition-colors pointer-events-auto"
                   >
                     <X className="w-4 h-4" />
                   </button>
                 </div>
 
                 <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-[10px] uppercase font-mono font-bold bg-slate-950 text-purple-400 px-2 py-0.5 rounded border border-purple-500/20">
+                    {selectedIncidentObj.type}
+                  </span>
                   <StatusBadge status={selectedIncidentObj.status} size="sm" />
                   <UrgencyIndicator urgency={selectedIncidentObj.urgency} />
-                  <span className="text-[10px] font-mono text-slate-400 ml-auto">{selectedIncidentObj.location.lat}, {selectedIncidentObj.location.lng}</span>
                 </div>
 
                 <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
                   {selectedIncidentObj.notes}
                 </p>
 
+                {selectedIncidentObj.type === IncidentType.MISSING && evidenceTrail && evidenceTrail.sightings.length > 0 && (
+                  <div className="bg-purple-950/20 border border-purple-900/40 rounded-lg p-2 text-[11px] text-purple-300">
+                    <span className="font-bold flex items-center gap-1">
+                      <Sparkles className="w-3.5 h-3.5 text-purple-400 animate-pulse" />
+                      Evidence Trail Active: {evidenceTrail.sightings.length} Sightings linked chronologically (purple path).
+                    </span>
+                  </div>
+                )}
+
+                <div className="text-[10px] font-mono bg-slate-950/60 p-1.5 rounded border border-slate-800 text-slate-400 flex items-center justify-between">
+                  <span>GPS Precision:</span>
+                  <span>
+                    {exactCoordsEnabled ? (
+                      <span className="text-emerald-400 font-bold flex items-center gap-0.5">
+                        Exact GPS ({selectedIncidentObj.location.lat.toFixed(5)}, {selectedIncidentObj.location.lng.toFixed(5)})
+                      </span>
+                    ) : (
+                      <span className="text-amber-500 font-bold">
+                        Fuzzed GPS (Approx. Range)
+                      </span>
+                    )}
+                  </span>
+                </div>
+
                 <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800">
                   <button
                     id="map-tooltip-btn-view"
                     onClick={() => onSelectIncident(selectedIncidentObj.id)}
-                    className="py-1.5 px-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs font-semibold text-slate-200 transition-all text-center flex items-center justify-center gap-1"
+                    className="py-1.5 px-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-xs font-semibold text-slate-200 transition-all text-center flex items-center justify-center gap-1 pointer-events-auto"
                   >
                     Incident Center
                     <ExternalLink className="w-3 h-3" />
@@ -451,7 +669,7 @@ export const CrisisMapPage: React.FC<CrisisMapPageProps> = ({
                   <button
                     id="map-tooltip-btn-dismiss"
                     onClick={() => setActivePinId(null)}
-                    className="py-1.5 px-3 bg-slate-950 hover:bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-400 hover:text-slate-200 transition-all text-center"
+                    className="py-1.5 px-3 bg-slate-950 hover:bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-400 hover:text-slate-200 transition-all text-center pointer-events-auto"
                   >
                     Acknowledge
                   </button>
@@ -467,14 +685,14 @@ export const CrisisMapPage: React.FC<CrisisMapPageProps> = ({
           <button
             id="map-zoom-in"
             onClick={() => setZoom(prev => Math.min(prev + 0.2, 3))}
-            className="p-2 bg-slate-900/90 backdrop-blur-md border border-slate-800 hover:bg-slate-800 rounded-lg text-slate-300 hover:text-white transition-colors shadow-md"
+            className="p-2 bg-slate-900/90 backdrop-blur-md border border-slate-800 hover:bg-slate-800 rounded-lg text-slate-300 hover:text-white transition-colors shadow-md pointer-events-auto"
           >
             <Plus className="w-4 h-4" />
           </button>
           <button
             id="map-zoom-out"
             onClick={() => setZoom(prev => Math.max(prev - 0.2, 0.6))}
-            className="p-2 bg-slate-900/90 backdrop-blur-md border border-slate-800 hover:bg-slate-800 rounded-lg text-slate-300 hover:text-white transition-colors shadow-md"
+            className="p-2 bg-slate-900/90 backdrop-blur-md border border-slate-800 hover:bg-slate-800 rounded-lg text-slate-300 hover:text-white transition-colors shadow-md pointer-events-auto"
           >
             <Minus className="w-4 h-4" />
           </button>
@@ -485,7 +703,7 @@ export const CrisisMapPage: React.FC<CrisisMapPageProps> = ({
               setViewCenter({ x: 0, y: 0 });
               setActivePinId(null);
             }}
-            className="p-2 bg-slate-900/90 backdrop-blur-md border border-slate-800 hover:bg-slate-800 rounded-lg text-slate-300 hover:text-white transition-colors shadow-md"
+            className="p-2 bg-slate-900/90 backdrop-blur-md border border-slate-800 hover:bg-slate-800 rounded-lg text-slate-300 hover:text-white transition-colors shadow-md pointer-events-auto"
             title="Recenter Map"
           >
             <Compass className="w-4 h-4 text-amber-500" />

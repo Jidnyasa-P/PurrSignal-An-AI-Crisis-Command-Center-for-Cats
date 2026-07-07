@@ -14,6 +14,8 @@ import {
   ArrowRight,
   Cat
 } from 'lucide-react';
+import { ThreeDCat } from '../components/ThreeDCat';
+import { Logo } from '../components/Logo';
 
 interface LandingPageProps {
   onNavigate: (page: string) => void;
@@ -33,19 +35,19 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* HERO SECTION */}
       <section className="relative overflow-hidden py-16 sm:py-24 border-b border-slate-200/60 dark:border-slate-900/60 bg-white dark:bg-slate-900">
         {/* Subtle grid pattern or signal wave decoration */}
-        <div className="absolute inset-0 pointer-events-none opacity-[0.03] dark:opacity-[0.02] bg-[radial-gradient(#e11d48_1px,transparent_1px)] [background-size:16px_16px]" />
+        <div className="absolute inset-0 pointer-events-none opacity-[0.03] dark:opacity-[0.02] bg-[radial-gradient(#e11d48_1px,transparent_1px)] [background-size:16px_1px]" />
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid lg:grid-cols-12 gap-12 items-center">
             
             <div className="lg:col-span-7 space-y-6">
-              {/* Emergency indicator pulse badge */}
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-rose-50 dark:bg-rose-950/40 border border-rose-200/50 dark:border-rose-900/50 text-rose-700 dark:text-rose-400 rounded-full text-xs font-semibold uppercase tracking-wider">
+              {/* Emergency indicator pulse badge with custom beautiful logo */}
+              <div className="inline-flex items-center gap-2.5 px-4 py-2 bg-rose-50 dark:bg-rose-950/40 border border-rose-200/50 dark:border-rose-900/50 text-rose-700 dark:text-rose-400 rounded-full text-xs font-semibold uppercase tracking-wider">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
                 </span>
-                Feline Crisis Dispatch Active
+                <span>Feline Crisis Dispatch Active</span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
@@ -99,15 +101,24 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
             </div>
 
-            {/* ILLUSTRATIVE SIDE */}
-            <div className="lg:col-span-5 relative">
-              <div className="relative mx-auto max-w-md lg:max-w-none">
+            {/* ILLUSTRATIVE SIDE - featuring 3D Cat and live telemetry */}
+            <div className="lg:col-span-5 relative flex flex-col items-center justify-center">
+              {/* Giant floating 3D Cat Centerpiece */}
+              <div className="relative z-20 -mb-10 hover:translate-y-[-8px] transition-transform duration-300">
+                <ThreeDCat size="xl" interactive={true} />
+                <div className="absolute -bottom-2 bg-gradient-to-r from-amber-500/20 to-rose-500/20 px-3 py-1 rounded-full border border-amber-500/20 text-[10px] font-mono text-amber-500 backdrop-blur-sm animate-pulse flex items-center gap-1.5 mx-auto left-0 right-0 w-max">
+                  <Sparkles className="w-3 h-3 text-amber-400" />
+                  Hover to Interact in 3D 🐾
+                </div>
+              </div>
+
+              <div className="relative mx-auto w-full max-w-md lg:max-w-none">
                 {/* Back decorative glowing blobs */}
                 <div className="absolute -top-12 -left-12 w-64 h-64 bg-amber-500/10 dark:bg-amber-400/5 rounded-full blur-3xl" />
                 <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-rose-500/10 dark:bg-rose-400/5 rounded-full blur-3xl" />
                 
                 {/* Visual Dashboard Card Mockup */}
-                <div className="relative bg-slate-950 text-slate-100 border border-slate-800 rounded-2xl shadow-2xl p-6 space-y-4">
+                <div className="relative bg-slate-950 text-slate-100 border border-slate-800 rounded-2xl shadow-2xl p-6 space-y-4 pt-12">
                   <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 bg-red-500 rounded-full animate-ping" />

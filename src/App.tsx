@@ -15,12 +15,15 @@ import {
   X, 
   Sun, 
   Moon,
-  Github
+  Github,
+  Heart,
+  Shield
 } from 'lucide-react';
 import { Incident, Mission, Rescuer, ToastMessage, IncidentStatus, IncidentUpdate } from './types';
 import { INITIAL_INCIDENTS, INITIAL_MISSIONS, REGISTERED_RESCUERS } from './data';
 import { ToastContainer } from './components/UI';
 import { MisoStorySimulator } from './components/MisoStorySimulator';
+import { Logo } from './components/Logo';
 
 // Pages
 import { LandingPage } from './pages/LandingPage';
@@ -29,6 +32,9 @@ import { CrisisMapPage } from './pages/CrisisMapPage';
 import { MissionControlPage } from './pages/MissionControlPage';
 import { IncidentDetailsPage } from './pages/IncidentDetailsPage';
 import { RescueCopilotPage } from './pages/RescueCopilotPage';
+import { GuardianPlanPage } from './pages/GuardianPlanPage';
+import { TrustSafetyPage } from './pages/TrustSafetyPage';
+
 
 export default function App() {
   // Navigation State
@@ -104,17 +110,36 @@ export default function App() {
   };
 
   // CORE ACTIONS
-  const handleAddIncident = (newIncData: Omit<Incident, 'id' | 'reportedAt' | 'aiConfidence' | 'aiSummary' | 'updates'>) => {
-    const newId = `inc_${Date.now()}`;
+  const handleAddIncident = (newIncData: Omit<Incident, 'id' | 'reportedAt' | 'updates'> & { id?: string; timeline?: any[]; updates?: any[]; aiConfidence?: number; aiSummary?: string }) => {
+    const newId = newIncData.id || `inc_${Date.now()}`;
     const reportedAt = new Date().toISOString();
-    const aiConfidence = Math.floor(Math.random() * 10) + 88; // 88% to 97% confidence
+    const aiConfidence = newIncData.aiConfidence || Math.floor(Math.random() * 10) + 88; // 88% to 97% confidence
     
     // Auto-structuring AI simulation summary
-    const dangerNotes = newIncData.urgency === 'critical' 
+    const dangerNotes = newIncData.urgency === 'critical' || newIncData.urgency === 'CRITICAL'
       ? "CRITICAL LIFE THREAT DETECTED. Flood, machinery, or trauma multipliers active." 
       : "Standard diagnostic baseline.";
 
-    const aiSummary = `SIGHTING CLASSIFICATION: ${newIncData.catDescription.color.toUpperCase()} feline. Location geocoded successfully to ${newIncData.location.name}. Condition reported as ${newIncData.catDescription.condition}. AI Triage: ${dangerNotes} Deploying bait (Fragrant oil mackerel/tuna) and standard mesh carrier box recommended immediately.`;
+    const colorVal = newIncData.catDescription?.color || newIncData.catProfile?.color || "unknown color";
+    const conditionVal = newIncData.catDescription?.condition || newIncData.catProfile?.condition || "stable";
+    const aiSummary = newIncData.aiSummary || `SIGHTING CLASSIFICATION: ${colorVal.toUpperCase()} feline. Location geocoded successfully to ${newIncData.location.name}. Condition reported as ${conditionVal}. AI Triage: ${dangerNotes} Deploying bait (Fragrant oil mackerel/tuna) and standard mesh carrier box recommended immediately.`;
+
+    const customUpdates = newIncData.updates || [
+      {
+        id: `up_${newId}_1`,
+        timestamp: reportedAt,
+        author: "PurrSignal AI Parser",
+        message: "Raw narrative parsed cleanly. High confidence coat markers extracted.",
+        statusChanged: newIncData.status || "reported"
+      },
+      {
+        id: `up_${newId}_2`,
+        timestamp: new Date(Date.now() + 2000).toISOString(),
+        author: "System Dispatcher",
+        message: "Sighting geolocated and mapped. Added coordinates to public radar.",
+        statusChanged: newIncData.status || "structured"
+      }
+    ];
 
     const newIncident: Incident = {
       ...newIncData,
@@ -122,28 +147,28 @@ export default function App() {
       reportedAt,
       aiConfidence,
       aiSummary,
-      updates: [
+      updates: customUpdates,
+      timeline: newIncData.timeline || [
         {
-          id: `up_${newId}_1`,
+          id: `t_${Date.now()}_1`,
           timestamp: reportedAt,
-          author: "PurrSignal AI Parser",
-          message: "Raw narrative parsed cleanly. High confidence coat markers extracted.",
-          statusChanged: "reported"
-        },
-        {
-          id: `up_${newId}_2`,
-          timestamp: new Date(Date.now() + 2000).toISOString(),
-          author: "System Dispatcher",
-          message: "Sighting geolocated and mapped. Added coordinates to public radar.",
-          statusChanged: "structured"
+          author: "Reporter",
+          message: `Incident created with reference ${newId}.`,
+          statusChanged: newIncData.status || "NEW"
         }
-      ]
-    };
+      ],
+      evidence: newIncData.evidence || (newIncData.mediaUrl ? [{
+        id: `ev_${Date.now()}`,
+        type: 'image',
+        url: newIncData.mediaUrl,
+        capturedAt: reportedAt
+      }] : [])
+    } as Incident;
 
     setIncidents(prev => [newIncident, ...prev]);
     addToast(
-      "Incident structured by AI!", 
-      `Successfully processed "${newIncData.title}" with ${aiConfidence}% confidence. Ready for verification.`,
+      "Incident Structured & Logged!", 
+      `Successfully logged "${newIncData.title}" [Ref: ${newId}]. Ready for verification.`,
       "success"
     );
   };
@@ -217,26 +242,28 @@ export default function App() {
     }));
   };
 
-  const handleUpdateMissionStatus = (id: string, status: 'completed' | 'cancelled') => {
+  const handleUpdateMissionStatus = (id: string, status: string) => {
     setMissions(prev => prev.map(msn => {
       if (msn.id === id) {
-        // Free up assigned rescuers
-        setRescuers(rPrev => rPrev.map(r => {
-          if (msn.assignedRescuers.includes(r.name)) {
-            return { ...r, status: 'available' };
-          }
-          return r;
-        }));
+        // Free up assigned rescuers if completed or cancelled
+        if (status === 'completed' || status === 'cancelled') {
+          setRescuers(rPrev => rPrev.map(r => {
+            if (msn.assignedRescuers.includes(r.name)) {
+              return { ...r, status: 'available' };
+            }
+            return r;
+          }));
+        }
 
         return { ...msn, status };
       }
       return msn;
     }));
 
-    const type = status === 'completed' ? 'success' : 'warning';
+    const type = status === 'completed' ? 'success' : 'info';
     addToast(
-      `Mission ${status.toUpperCase()}`, 
-      `Operational status update logged cleanly. Rescuers marked as Available.`,
+      `Mission Status Logged`, 
+      `Operational status updated cleanly to "${status.toUpperCase()}".`,
       type
     );
   };
@@ -307,17 +334,9 @@ export default function App() {
             {/* LOGO */}
             <div 
               onClick={() => setActivePage('landing')}
-              className="flex items-center gap-2 cursor-pointer group"
+              className="cursor-pointer"
             >
-              <div className="p-2 bg-gradient-to-br from-amber-500 to-rose-500 rounded-xl text-white shadow-md shadow-amber-500/10 group-hover:scale-105 transition-transform">
-                <Cat className="w-5 h-5 stroke-[2.5]" />
-              </div>
-              <div>
-                <span className="text-base font-extrabold tracking-tight text-slate-900 dark:text-white flex items-center gap-1">
-                  PurrSignal
-                  <span className="text-[10px] uppercase font-mono font-bold tracking-widest text-rose-500 dark:text-rose-400 bg-rose-500/5 px-1.5 py-0.5 rounded border border-rose-500/10">Ops</span>
-                </span>
-              </div>
+              <Logo />
             </div>
 
             {/* DESKTOP NAV LINKS */}
@@ -355,6 +374,24 @@ export default function App() {
               >
                 <Sparkles className="w-4 h-4 text-purple-500 animate-pulse" />
                 AI Copilot
+              </button>
+
+              <button
+                id="nav-link-guardian"
+                onClick={() => setActivePage('guardian')}
+                className={`px-3 py-2 rounded-lg hover:text-slate-950 dark:hover:text-white transition-colors flex items-center gap-1 ${activePage === 'guardian' ? 'bg-slate-100 dark:bg-slate-900 text-slate-950 dark:text-white' : ''}`}
+              >
+                <Heart className="w-4 h-4 text-rose-500" />
+                Guardian Plan
+              </button>
+
+              <button
+                id="nav-link-safety"
+                onClick={() => setActivePage('safety')}
+                className={`px-3 py-2 rounded-lg hover:text-slate-950 dark:hover:text-white transition-colors flex items-center gap-1 ${activePage === 'safety' ? 'bg-slate-100 dark:bg-slate-900 text-slate-950 dark:text-white' : ''}`}
+              >
+                <Shield className="w-4 h-4 text-emerald-500" />
+                Trust & Safety
               </button>
 
               <div className="w-[1px] h-4 bg-slate-200 dark:bg-slate-800 mx-2" />
@@ -436,6 +473,22 @@ export default function App() {
               AI Copilot
             </button>
             <button
+              id="mob-link-guardian"
+              onClick={() => { setActivePage('guardian'); setMobileMenuOpen(false); }}
+              className="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 flex items-center gap-2"
+            >
+              <Heart className="w-4 h-4 text-rose-500" />
+              Guardian Plan
+            </button>
+            <button
+              id="mob-link-safety"
+              onClick={() => { setActivePage('safety'); setMobileMenuOpen(false); }}
+              className="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 flex items-center gap-2"
+            >
+              <Shield className="w-4 h-4 text-emerald-500" />
+              Trust & Safety
+            </button>
+            <button
               id="mob-link-report"
               onClick={() => { setActivePage('report'); setMobileMenuOpen(false); }}
               className="w-full text-left px-3 py-2 bg-rose-600 text-white font-bold rounded-lg flex items-center justify-center gap-2 mt-4"
@@ -496,6 +549,7 @@ export default function App() {
             onAddMissionUpdate={handleAddMissionUpdate}
             onAddRescuer={handleAddRescuer}
             onUpdateIncidentStatus={handleUpdateIncidentStatus}
+            onAddIncidentUpdate={handleAddIncidentUpdate}
           />
         )}
 
@@ -511,7 +565,32 @@ export default function App() {
         )}
 
         {activePage === 'copilot' && (
-          <RescueCopilotPage />
+          <RescueCopilotPage 
+            incidents={incidents}
+            missions={missions}
+            rescuers={rescuers}
+            onUpdateIncidentStatus={handleUpdateIncidentStatus}
+            onUpdateMissionStatus={handleUpdateMissionStatus}
+            onAssignRescuer={(missionId, rescuerName) => {
+              setMissions(prev => prev.map(m => {
+                if (m.id === missionId) {
+                  const assigned = m.assignedRescuers || [];
+                  if (assigned.includes(rescuerName)) return m;
+                  return { ...m, assignedRescuers: [...assigned, rescuerName] };
+                }
+                return m;
+              }));
+              addToast("Operations Modified", `Assigned ${rescuerName} to mission ${missionId}`, "success");
+            }}
+          />
+        )}
+
+        {activePage === 'guardian' && (
+          <GuardianPlanPage />
+        )}
+
+        {activePage === 'safety' && (
+          <TrustSafetyPage />
         )}
       </main>
 
