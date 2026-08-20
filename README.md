@@ -416,7 +416,6 @@ Distributed under the **MIT License**. See `LICENSE` for more information.
 ## 📌 Acknowledgements
 
 * **Google AI Studio** for equipping volunteers with cutting-edge Gemini Developer credits.
-* **Unsplash** for high-quality animal photography and visual assets.
 * **The open-source community** for the elegant Lucide React icon configurations.
 
 ---
